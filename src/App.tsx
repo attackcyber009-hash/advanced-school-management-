@@ -164,6 +164,32 @@ export default function App() {
     | null
   >(null);
 
+  // Exam Action State
+  const [examAction, setExamAction] = useState<
+    | 'terms'
+    | 'marks_entry'
+    | 'timetable'
+    | 'assign_grade_term'
+    | 'assign_grade_final'
+    | 'teacher_remarks'
+    | 'tabulation_term'
+    | 'tabulation_final'
+    | 'positions_term'
+    | 'positions_final'
+    | 'admit_cards_term'
+    | 'admit_cards_final'
+    | 'sms_term'
+    | 'sms_final'
+    | 'marksheet_term'
+    | 'marksheet_final'
+    | null
+  >(null);
+
+  const handleSelectExamAction = (action: any) => {
+    setActiveTab('exams');
+    setExamAction(action);
+  };
+
   const handleSelectAdmissionSubTab = (
     subTab: 'admit' | 'inquiries' | 'bulk' | 'requests',
     action?: string
@@ -570,6 +596,7 @@ export default function App() {
           onSelectAttendanceAction={handleSelectAttendanceAction}
           onSelectTimetableAction={handleSelectTimetableAction}
           onSelectFeeAction={handleSelectFeeAction}
+          onSelectExamAction={handleSelectExamAction}
           complaintsCount={unreadComplaints}
           unpaidFeesCount={unpaidCount}
           isCollapsed={isCollapsed}
@@ -705,6 +732,7 @@ export default function App() {
           {activeTab === 'exams' && (
             <ExamManagementView
               marks={marks}
+              activeAction={examAction}
               onPrintReportCard={(entry) =>
                 setPrintModalConfig({ isOpen: true, type: 'report_card', data: entry })
               }

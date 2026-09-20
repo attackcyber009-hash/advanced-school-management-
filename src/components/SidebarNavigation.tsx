@@ -88,6 +88,25 @@ interface SidebarNavigationProps {
       | 'print_student'
       | 'print_family'
   ) => void;
+  onSelectExamAction?: (
+    action:
+      | 'terms'
+      | 'marks_entry'
+      | 'timetable'
+      | 'assign_grade_term'
+      | 'assign_grade_final'
+      | 'teacher_remarks'
+      | 'tabulation_term'
+      | 'tabulation_final'
+      | 'positions_term'
+      | 'positions_final'
+      | 'admit_cards_term'
+      | 'admit_cards_final'
+      | 'sms_term'
+      | 'sms_final'
+      | 'marksheet_term'
+      | 'marksheet_final'
+  ) => void;
   complaintsCount: number;
   unpaidFeesCount: number;
   isOpen?: boolean;
@@ -111,6 +130,7 @@ export default function SidebarNavigation({
   onSelectAttendanceAction,
   onSelectTimetableAction,
   onSelectFeeAction,
+  onSelectExamAction,
   complaintsCount,
   unpaidFeesCount,
   isOpen = true,
@@ -143,6 +163,16 @@ export default function SidebarNavigation({
 
   const handleTabClick = (tab: ActiveNavTab) => {
     onSelectTab(tab);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
+  const handleExamSubClick = (action: any) => {
+    onSelectTab('exams');
+    if (onSelectExamAction) {
+      onSelectExamAction(action);
+    }
     if (onCloseMobile) {
       onCloseMobile();
     }
@@ -952,28 +982,28 @@ export default function SidebarNavigation({
             onClickParent={() => handleTabClick('exams')}
             isCollapsed={isCollapsed}
             subItems={[
-              { label: '• Exam term / semester list', onClick: () => handleTabClick('exams') },
-              { label: '• Marks entry', onClick: () => handleTabClick('exams') },
-              { label: '• Exam timetable', onClick: () => handleTabClick('exams') },
-              { label: '• Assign grade', onClick: () => handleTabClick('exams') },
-              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final result', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Teacher remarks', onClick: () => handleTabClick('exams') },
-              { label: '• Tabulation sheet', onClick: () => handleTabClick('exams') },
-              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final result', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Position holder', onClick: () => handleTabClick('exams') },
-              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Print admit cards / slips', onClick: () => handleTabClick('exams') },
-              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Send marks by SMS', onClick: () => handleTabClick('exams') },
-              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Print mark sheets', onClick: () => handleTabClick('exams') },
-              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Exam term / semester list', onClick: () => handleExamSubClick('terms') },
+              { label: '• Marks entry', onClick: () => handleExamSubClick('marks_entry') },
+              { label: '• Exam timetable', onClick: () => handleExamSubClick('timetable') },
+              { label: '• Assign grade', onClick: () => handleExamSubClick('assign_grade_term') },
+              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('assign_grade_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final result', onClick: () => handleExamSubClick('assign_grade_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Teacher remarks', onClick: () => handleExamSubClick('teacher_remarks') },
+              { label: '• Tabulation sheet', onClick: () => handleExamSubClick('tabulation_term') },
+              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('tabulation_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final result', onClick: () => handleExamSubClick('tabulation_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Position holder', onClick: () => handleExamSubClick('positions_term') },
+              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('positions_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleExamSubClick('positions_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print admit cards / slips', onClick: () => handleExamSubClick('admit_cards_term') },
+              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('admit_cards_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleExamSubClick('admit_cards_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Send marks by SMS', onClick: () => handleExamSubClick('sms_term') },
+              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('sms_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleExamSubClick('sms_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print mark sheets', onClick: () => handleExamSubClick('marksheet_term') },
+              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('marksheet_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleExamSubClick('marksheet_final'), className: 'text-slate-400 pl-3 text-[10px]' },
             ]}
           />
 
