@@ -45,18 +45,32 @@ import {
   Calculator,
   Megaphone,
   HelpCircle,
+  CheckSquare,
   ChevronDown,
   ChevronRight,
   ChevronLeft,
   X,
   PanelLeftClose,
   PanelLeftOpen,
+  MessageSquare,
+  Bell,
+  MessageCircle,
+  Send,
 } from 'lucide-react';
 import { ActiveNavTab } from '../types';
 
 interface SidebarNavigationProps {
   activeTab: ActiveNavTab;
   onSelectTab: (tab: ActiveNavTab) => void;
+  onSelectDiaryAction?: (action: 'manage' | 'send_sms') => void;
+  onSelectStudyMaterialsAction?: (action: 'browse' | 'upload') => void;
+  onSelectLeaveAction?: (action: 'requests' | 'balances' | 'apply') => void;
+  onSelectSmsAction?: (action: 'parents' | 'students' | 'staff' | 'specific' | 'templates' | 'history') => void;
+  onSelectMobileAction?: (action: 'parents' | 'staff' | 'students' | 'history') => void;
+  onSelectWhatsappAction?: (action: 'parents' | 'staff' | 'history') => void;
+  onSelectTelegramAction?: (action: 'parents' | 'staff' | 'history') => void;
+  onSelectEmailAction?: (action: 'specific' | 'history') => void;
+  onSelectCertificationsAction?: (action: 'printing' | 'template' | 'student' | 'staff') => void;
   onSelectAdmissionSubTab?: (subTab: 'admit' | 'inquiries' | 'bulk' | 'requests', action?: string) => void;
   onSelectStudentAction?: (action: 'info' | 'promotion' | 'birthday' | 'transfer') => void;
   onSelectParentAction?: (action: 'manage' | 'requests' | 'reports') => void;
@@ -90,22 +104,45 @@ interface SidebarNavigationProps {
   ) => void;
   onSelectExamAction?: (
     action:
-      | 'terms'
+      | 'exam_list'
       | 'marks_entry'
-      | 'timetable'
-      | 'assign_grade_term'
-      | 'assign_grade_final'
+      | 'timetable_add'
+      | 'timetable_manage'
+      | 'grade_particular'
+      | 'grade_final'
       | 'teacher_remarks'
-      | 'tabulation_term'
+      | 'tabulation_particular'
       | 'tabulation_final'
-      | 'positions_term'
+      | 'positions_particular'
       | 'positions_final'
-      | 'admit_cards_term'
+      | 'admit_cards_particular'
       | 'admit_cards_final'
-      | 'sms_term'
+      | 'sms_particular'
       | 'sms_final'
-      | 'marksheet_term'
-      | 'marksheet_final'
+      | 'print_mark_sheets'
+      | 'exam_reports'
+  ) => void;
+  onSelectTestAction?: (
+    action:
+      | 'tests_list'
+      | 'marks_entry'
+      | 'timetable_add'
+      | 'timetable_manage'
+      | 'schedules_add'
+      | 'schedules_manage'
+      | 'grade_particular'
+      | 'grade_combined'
+      | 'teacher_remarks'
+      | 'tabulation_particular'
+      | 'tabulation_combined'
+      | 'positions_particular'
+      | 'positions_combined'
+      | 'admit_cards_particular'
+      | 'admit_cards_combined'
+      | 'sms_particular'
+      | 'sms_combined'
+      | 'print_mark_sheets'
+      | 'test_reports'
   ) => void;
   complaintsCount: number;
   unpaidFeesCount: number;
@@ -122,6 +159,15 @@ interface SidebarNavigationProps {
 export default function SidebarNavigation({
   activeTab,
   onSelectTab,
+  onSelectDiaryAction,
+  onSelectStudyMaterialsAction,
+  onSelectLeaveAction,
+  onSelectSmsAction,
+  onSelectMobileAction,
+  onSelectWhatsappAction,
+  onSelectTelegramAction,
+  onSelectEmailAction,
+  onSelectCertificationsAction,
   onSelectAdmissionSubTab,
   onSelectStudentAction,
   onSelectParentAction,
@@ -131,6 +177,7 @@ export default function SidebarNavigation({
   onSelectTimetableAction,
   onSelectFeeAction,
   onSelectExamAction,
+  onSelectTestAction,
   complaintsCount,
   unpaidFeesCount,
   isOpen = true,
@@ -144,17 +191,29 @@ export default function SidebarNavigation({
 }: SidebarNavigationProps) {
   // Expanded parent submenus
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
+    dashboard: false,
+    websiteManagement: false,
     admissions: true,
     students: false,
     attendance: true,
     fees: true,
     exams: true,
+    tests: true,
     timetable: true,
     onlinePayment: false,
     expenses: false,
     salaries: false,
     reports: false,
     inventory: true,
+    certifications: false,
+    homeworkDiary: false,
+    studyMaterials: false,
+    leaveManagement: false,
+    smsManagement: false,
+    mobileNotifications: false,
+    whatsappNotifications: false,
+    telegramNotifications: false,
+    emailAlerts: false,
   });
 
   const toggleSubmenu = (key: string) => {
@@ -172,6 +231,16 @@ export default function SidebarNavigation({
     onSelectTab('exams');
     if (onSelectExamAction) {
       onSelectExamAction(action);
+    }
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
+  const handleTestSubClick = (action: any) => {
+    onSelectTab('tests');
+    if (onSelectTestAction) {
+      onSelectTestAction(action);
     }
     if (onCloseMobile) {
       onCloseMobile();
@@ -293,15 +362,448 @@ export default function SidebarNavigation({
             MAIN NAVIGATION
           </div>
 
-          {/* 1. Dashboard */}
-          <SidebarNavItem
-            id="nav-dashboard"
+          {/* 1. Dashboard Submenu Suite */}
+          <SidebarNavSubmenu
+            id="nav-dashboard-suite"
             icon={LayoutDashboard}
             iconColor="text-sky-400"
             label="Dashboard"
-            active={activeTab === 'dashboard'}
-            onClick={() => handleTabClick('dashboard')}
+            active={
+              activeTab === 'dashboard' ||
+              activeTab === 'school_notice_board' ||
+              activeTab === 'manage_campuses' ||
+              activeTab === 'admin_roles' ||
+              activeTab === 'sms_defaulters' ||
+              activeTab === 'bulk_fee_payment' ||
+              activeTab === 'admit_student_form' ||
+              activeTab === 'fee_types_heads' ||
+              activeTab === 'family_fee_calculator' ||
+              activeTab === 'manage_biometric_devices' ||
+              activeTab === 'website_management'
+            }
+            isExpanded={expandedMenus.dashboard}
+            onToggleExpand={() => toggleSubmenu('dashboard')}
+            onClickParent={() => handleTabClick('dashboard')}
             isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Overview Dashboard',
+                onClick: () => handleTabClick('dashboard'),
+              },
+              {
+                label: '• School notice board',
+                onClick: () => handleTabClick('school_notice_board'),
+              },
+              {
+                label: '• Manage campuses',
+                onClick: () => handleTabClick('manage_campuses'),
+              },
+              {
+                label: '• Admin role management',
+                onClick: () => handleTabClick('admin_roles'),
+              },
+              {
+                label: '• SMS to fee defaulter',
+                onClick: () => handleTabClick('sms_defaulters'),
+              },
+              {
+                label: '• Bulk fee payment',
+                onClick: () => handleTabClick('bulk_fee_payment'),
+              },
+              {
+                label: '• Admit student',
+                onClick: () => handleTabClick('admit_student_form'),
+              },
+              {
+                label: '• Fee types/heads',
+                onClick: () => handleTabClick('fee_types_heads'),
+              },
+              {
+                label: '• Family fee calculator',
+                onClick: () => handleTabClick('family_fee_calculator'),
+              },
+              {
+                label: '• Manage transport',
+                onClick: () => handleTabClick('transport'),
+              },
+              {
+                label: '• Transport report',
+                onClick: () => handleTabClick('transport'),
+              },
+              {
+                label: '• Manage biometric devices',
+                onClick: () => handleTabClick('manage_biometric_devices'),
+              },
+              {
+                label: '• Website management',
+                onClick: () => handleTabClick('website_management'),
+              },
+            ]}
+          />
+
+          {/* Daily Homework Diary (Main Navigation submenu as requested) */}
+          <SidebarNavSubmenu
+            id="nav-homework-diary-main"
+            icon={BookOpen}
+            iconColor="text-amber-500"
+            label="Daily homework diary"
+            active={activeTab === 'daily_homework_diary'}
+            isExpanded={expandedMenus.homeworkDiary}
+            onToggleExpand={() => toggleSubmenu('homeworkDiary')}
+            onClickParent={() => {
+              handleTabClick('daily_homework_diary');
+              if (onSelectDiaryAction) onSelectDiaryAction('manage');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Add and manage diaries',
+                onClick: () => {
+                  handleTabClick('daily_homework_diary');
+                  if (onSelectDiaryAction) onSelectDiaryAction('manage');
+                },
+              },
+              {
+                label: '• Send diary via SMS',
+                onClick: () => {
+                  handleTabClick('daily_homework_diary');
+                  if (onSelectDiaryAction) onSelectDiaryAction('send_sms');
+                },
+              },
+            ]}
+          />
+
+          {/* Study materials (Main Navigation submenu as requested) */}
+          <SidebarNavSubmenu
+            id="nav-study-materials-main"
+            icon={BookMarked}
+            iconColor="text-teal-400"
+            label="Study materials"
+            active={activeTab === 'study_materials'}
+            isExpanded={expandedMenus.studyMaterials}
+            onToggleExpand={() => toggleSubmenu('studyMaterials')}
+            onClickParent={() => {
+              handleTabClick('study_materials');
+              if (onSelectStudyMaterialsAction) onSelectStudyMaterialsAction('browse');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Browse Repository',
+                onClick: () => {
+                  handleTabClick('study_materials');
+                  if (onSelectStudyMaterialsAction) onSelectStudyMaterialsAction('browse');
+                },
+              },
+              {
+                label: '• Upload Materials',
+                onClick: () => {
+                  handleTabClick('study_materials');
+                  if (onSelectStudyMaterialsAction) onSelectStudyMaterialsAction('upload');
+                },
+              },
+            ]}
+          />
+
+          {/* Leave management (Main Navigation submenu as requested) */}
+          <SidebarNavSubmenu
+            id="nav-leave-management-main"
+            icon={CalendarCheck}
+            iconColor="text-sky-400"
+            label="Leave management"
+            active={activeTab === 'leave_management'}
+            isExpanded={expandedMenus.leaveManagement}
+            onToggleExpand={() => toggleSubmenu('leaveManagement')}
+            onClickParent={() => {
+              handleTabClick('leave_management');
+              if (onSelectLeaveAction) onSelectLeaveAction('requests');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Leave Requests',
+                onClick: () => {
+                  handleTabClick('leave_management');
+                  if (onSelectLeaveAction) onSelectLeaveAction('requests');
+                },
+              },
+              {
+                label: '• Leave Balances',
+                onClick: () => {
+                  handleTabClick('leave_management');
+                  if (onSelectLeaveAction) onSelectLeaveAction('balances');
+                },
+              },
+              {
+                label: '• Apply for Leave',
+                onClick: () => {
+                  handleTabClick('leave_management');
+                  if (onSelectLeaveAction) onSelectLeaveAction('apply');
+                },
+              },
+            ]}
+          />
+
+          {/* SMS Management */}
+          <SidebarNavSubmenu
+            id="nav-sms-management-main"
+            icon={MessageSquare}
+            iconColor="text-amber-500"
+            label="SMS Management"
+            active={activeTab === 'sms_management'}
+            isExpanded={expandedMenus.smsManagement}
+            onToggleExpand={() => toggleSubmenu('smsManagement')}
+            onClickParent={() => {
+              handleTabClick('sms_management');
+              if (onSelectSmsAction) onSelectSmsAction('parents');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• SMS to parents',
+                onClick: () => {
+                  handleTabClick('sms_management');
+                  if (onSelectSmsAction) onSelectSmsAction('parents');
+                },
+              },
+              {
+                label: '• SMS to students',
+                onClick: () => {
+                  handleTabClick('sms_management');
+                  if (onSelectSmsAction) onSelectSmsAction('students');
+                },
+              },
+              {
+                label: '• SMS to staff',
+                onClick: () => {
+                  handleTabClick('sms_management');
+                  if (onSelectSmsAction) onSelectSmsAction('staff');
+                },
+              },
+              {
+                label: '• SMS to specific number',
+                onClick: () => {
+                  handleTabClick('sms_management');
+                  if (onSelectSmsAction) onSelectSmsAction('specific');
+                },
+              },
+              {
+                label: '• SMS templates',
+                onClick: () => {
+                  handleTabClick('sms_management');
+                  if (onSelectSmsAction) onSelectSmsAction('templates');
+                },
+              },
+              {
+                label: '• SMS history',
+                onClick: () => {
+                  handleTabClick('sms_management');
+                  if (onSelectSmsAction) onSelectSmsAction('history');
+                },
+              },
+            ]}
+          />
+
+          {/* Mobile App Notifications */}
+          <SidebarNavSubmenu
+            id="nav-mobile-notifications-main"
+            icon={Bell}
+            iconColor="text-rose-400"
+            label="Mobile App Notifications"
+            active={activeTab === 'mobile_notifications'}
+            isExpanded={expandedMenus.mobileNotifications}
+            onToggleExpand={() => toggleSubmenu('mobileNotifications')}
+            onClickParent={() => {
+              handleTabClick('mobile_notifications');
+              if (onSelectMobileAction) onSelectMobileAction('parents');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Notifications to parent',
+                onClick: () => {
+                  handleTabClick('mobile_notifications');
+                  if (onSelectMobileAction) onSelectMobileAction('parents');
+                },
+              },
+              {
+                label: '• Notifications to staff',
+                onClick: () => {
+                  handleTabClick('mobile_notifications');
+                  if (onSelectMobileAction) onSelectMobileAction('staff');
+                },
+              },
+              {
+                label: '• Notifications to students',
+                onClick: () => {
+                  handleTabClick('mobile_notifications');
+                  if (onSelectMobileAction) onSelectMobileAction('students');
+                },
+              },
+              {
+                label: '• Send notifications history',
+                onClick: () => {
+                  handleTabClick('mobile_notifications');
+                  if (onSelectMobileAction) onSelectMobileAction('history');
+                },
+              },
+            ]}
+          />
+
+          {/* WhatsApp Notifications */}
+          <SidebarNavSubmenu
+            id="nav-whatsapp-notifications-main"
+            icon={MessageCircle}
+            iconColor="text-emerald-500"
+            label="WhatsApp Notifications"
+            active={activeTab === 'whatsapp_notifications'}
+            isExpanded={expandedMenus.whatsappNotifications}
+            onToggleExpand={() => toggleSubmenu('whatsappNotifications')}
+            onClickParent={() => {
+              handleTabClick('whatsapp_notifications');
+              if (onSelectWhatsappAction) onSelectWhatsappAction('parents');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Message to parents',
+                onClick: () => {
+                  handleTabClick('whatsapp_notifications');
+                  if (onSelectWhatsappAction) onSelectWhatsappAction('parents');
+                },
+              },
+              {
+                label: '• Message to staff',
+                onClick: () => {
+                  handleTabClick('whatsapp_notifications');
+                  if (onSelectWhatsappAction) onSelectWhatsappAction('staff');
+                },
+              },
+              {
+                label: '• Send message history',
+                onClick: () => {
+                  handleTabClick('whatsapp_notifications');
+                  if (onSelectWhatsappAction) onSelectWhatsappAction('history');
+                },
+              },
+            ]}
+          />
+
+          {/* Telegram Notifications */}
+          <SidebarNavSubmenu
+            id="nav-telegram-notifications-main"
+            icon={Send}
+            iconColor="text-sky-500"
+            label="Telegram Notifications"
+            active={activeTab === 'telegram_notifications'}
+            isExpanded={expandedMenus.telegramNotifications}
+            onToggleExpand={() => toggleSubmenu('telegramNotifications')}
+            onClickParent={() => {
+              handleTabClick('telegram_notifications');
+              if (onSelectTelegramAction) onSelectTelegramAction('parents');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Message to parents',
+                onClick: () => {
+                  handleTabClick('telegram_notifications');
+                  if (onSelectTelegramAction) onSelectTelegramAction('parents');
+                },
+              },
+              {
+                label: '• Message to staff',
+                onClick: () => {
+                  handleTabClick('telegram_notifications');
+                  if (onSelectTelegramAction) onSelectTelegramAction('staff');
+                },
+              },
+              {
+                label: '• Send message history',
+                onClick: () => {
+                  handleTabClick('telegram_notifications');
+                  if (onSelectTelegramAction) onSelectTelegramAction('history');
+                },
+              },
+            ]}
+          />
+
+          {/* Email Alerts */}
+          <SidebarNavSubmenu
+            id="nav-email-alerts-main"
+            icon={Mail}
+            iconColor="text-purple-400"
+            label="Email Alerts"
+            active={activeTab === 'email_alerts'}
+            isExpanded={expandedMenus.emailAlerts}
+            onToggleExpand={() => toggleSubmenu('emailAlerts')}
+            onClickParent={() => {
+              handleTabClick('email_alerts');
+              if (onSelectEmailAction) onSelectEmailAction('specific');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Message to specific emails',
+                onClick: () => {
+                  handleTabClick('email_alerts');
+                  if (onSelectEmailAction) onSelectEmailAction('specific');
+                },
+              },
+              {
+                label: '• Send email history’s',
+                onClick: () => {
+                  handleTabClick('email_alerts');
+                  if (onSelectEmailAction) onSelectEmailAction('history');
+                },
+              },
+            ]}
+          />
+
+          {/* Certifications (Main Navigation submenu as requested) */}
+          <SidebarNavSubmenu
+            id="nav-certifications-main"
+            icon={Award}
+            iconColor="text-amber-400"
+            label="Certifications"
+            active={activeTab === 'certifications_hub'}
+            isExpanded={expandedMenus.certifications}
+            onToggleExpand={() => toggleSubmenu('certifications')}
+            onClickParent={() => {
+              handleTabClick('certifications_hub');
+              if (onSelectCertificationsAction) onSelectCertificationsAction('printing');
+            }}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Certificate printing',
+                onClick: () => {
+                  handleTabClick('certifications_hub');
+                  if (onSelectCertificationsAction) onSelectCertificationsAction('printing');
+                },
+              },
+              {
+                label: '• Certificate template',
+                onClick: () => {
+                  handleTabClick('certifications_hub');
+                  if (onSelectCertificationsAction) onSelectCertificationsAction('template');
+                },
+              },
+              {
+                label: '• Student certificate',
+                onClick: () => {
+                  handleTabClick('certifications_hub');
+                  if (onSelectCertificationsAction) onSelectCertificationsAction('student');
+                },
+              },
+              {
+                label: '• Staff certificate',
+                onClick: () => {
+                  handleTabClick('certifications_hub');
+                  if (onSelectCertificationsAction) onSelectCertificationsAction('staff');
+                },
+              },
+            ]}
           />
 
           {/* 2. Admission Management (Submenu) */}
@@ -970,40 +1472,82 @@ export default function SidebarNavigation({
             ]}
           />
 
-          {/* Exam / Test Management Submenu */}
+          {/* Exam Management Submenu */}
           <SidebarNavSubmenu
             id="nav-exams"
             icon={Award}
             iconColor="text-purple-400"
-            label="Exam / test management"
+            label="Exam management"
             active={activeTab === 'exams'}
             isExpanded={expandedMenus.exams}
             onToggleExpand={() => toggleSubmenu('exams')}
             onClickParent={() => handleTabClick('exams')}
             isCollapsed={isCollapsed}
             subItems={[
-              { label: '• Exam term / semester list', onClick: () => handleExamSubClick('terms') },
+              { label: '• Exam list', onClick: () => handleExamSubClick('exam_list') },
               { label: '• Marks entry', onClick: () => handleExamSubClick('marks_entry') },
-              { label: '• Exam timetable', onClick: () => handleExamSubClick('timetable') },
-              { label: '• Assign grade', onClick: () => handleExamSubClick('assign_grade_term') },
-              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('assign_grade_term'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final result', onClick: () => handleExamSubClick('assign_grade_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Exam timetable', onClick: () => handleExamSubClick('timetable_manage') },
+              { label: '   - Add timetable', onClick: () => handleExamSubClick('timetable_add'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - Manage timetable', onClick: () => handleExamSubClick('timetable_manage'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Assign grade', onClick: () => handleExamSubClick('grade_particular') },
+              { label: '   - For particular exam', onClick: () => handleExamSubClick('grade_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final result', onClick: () => handleExamSubClick('grade_final'), className: 'text-slate-400 pl-3 text-[10px]' },
               { label: '• Teacher remarks', onClick: () => handleExamSubClick('teacher_remarks') },
-              { label: '• Tabulation sheet', onClick: () => handleExamSubClick('tabulation_term') },
-              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('tabulation_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Tabulation sheet', onClick: () => handleExamSubClick('tabulation_particular') },
+              { label: '   - For particular exam', onClick: () => handleExamSubClick('tabulation_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
               { label: '   - For final result', onClick: () => handleExamSubClick('tabulation_final'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Position holder', onClick: () => handleExamSubClick('positions_term') },
-              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('positions_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Position holder', onClick: () => handleExamSubClick('positions_particular') },
+              { label: '   - For particular exam', onClick: () => handleExamSubClick('positions_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
               { label: '   - For final exam', onClick: () => handleExamSubClick('positions_final'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Print admit cards / slips', onClick: () => handleExamSubClick('admit_cards_term') },
-              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('admit_cards_term'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print admits cards / slips', onClick: () => handleExamSubClick('admit_cards_particular') },
+              { label: '   - For particular exam', onClick: () => handleExamSubClick('admit_cards_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
               { label: '   - For final exam', onClick: () => handleExamSubClick('admit_cards_final'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Send marks by SMS', onClick: () => handleExamSubClick('sms_term') },
-              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('sms_term'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final exam', onClick: () => handleExamSubClick('sms_final'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '• Print mark sheets', onClick: () => handleExamSubClick('marksheet_term') },
-              { label: '   - Term / semester wise', onClick: () => handleExamSubClick('marksheet_term'), className: 'text-slate-400 pl-3 text-[10px]' },
-              { label: '   - For final exam', onClick: () => handleExamSubClick('marksheet_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Send marks by SMS', onClick: () => handleExamSubClick('sms_particular') },
+              { label: '   - For particular exam', onClick: () => handleExamSubClick('sms_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final result', onClick: () => handleExamSubClick('sms_final'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print mark sheets', onClick: () => handleExamSubClick('print_mark_sheets') },
+              { label: '• Exam reports', onClick: () => handleExamSubClick('exam_reports') },
+            ]}
+          />
+
+          {/* Test Management Submenu */}
+          <SidebarNavSubmenu
+            id="nav-tests"
+            icon={CheckSquare}
+            iconColor="text-indigo-400"
+            label="Test management"
+            active={activeTab === 'tests'}
+            isExpanded={expandedMenus.tests}
+            onToggleExpand={() => toggleSubmenu('tests')}
+            onClickParent={() => handleTabClick('tests')}
+            isCollapsed={isCollapsed}
+            subItems={[
+              { label: '• Test list', onClick: () => handleTestSubClick('tests_list') },
+              { label: '• Marks entry', onClick: () => handleTestSubClick('marks_entry') },
+              { label: '• Test timetable', onClick: () => handleTestSubClick('timetable_manage') },
+              { label: '   - Add timetable', onClick: () => handleTestSubClick('timetable_add'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - Manage timetable', onClick: () => handleTestSubClick('timetable_manage'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Test schedules', onClick: () => handleTestSubClick('schedules_manage') },
+              { label: '   - Add schedules', onClick: () => handleTestSubClick('schedules_add'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - Manage schedules', onClick: () => handleTestSubClick('schedules_manage'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Assign grade', onClick: () => handleTestSubClick('grade_particular') },
+              { label: '   - For particular test', onClick: () => handleTestSubClick('grade_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For combined result', onClick: () => handleTestSubClick('grade_combined'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Teacher remarks', onClick: () => handleTestSubClick('teacher_remarks') },
+              { label: '• Tabulation sheet', onClick: () => handleTestSubClick('tabulation_particular') },
+              { label: '   - For particular test', onClick: () => handleTestSubClick('tabulation_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For combined result', onClick: () => handleTestSubClick('tabulation_combined'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Position holder', onClick: () => handleTestSubClick('positions_particular') },
+              { label: '   - For particular test', onClick: () => handleTestSubClick('positions_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For combined exam', onClick: () => handleTestSubClick('positions_combined'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print admit cards / slips', onClick: () => handleTestSubClick('admit_cards_particular') },
+              { label: '   - For particular test', onClick: () => handleTestSubClick('admit_cards_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For combined exam', onClick: () => handleTestSubClick('admit_cards_combined'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Send marks by SMS', onClick: () => handleTestSubClick('sms_particular') },
+              { label: '   - For particular test', onClick: () => handleTestSubClick('sms_particular'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For combined result', onClick: () => handleTestSubClick('sms_combined'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print mark sheets', onClick: () => handleTestSubClick('print_mark_sheets') },
+              { label: '• Test reports', onClick: () => handleTestSubClick('test_reports') },
             ]}
           />
 

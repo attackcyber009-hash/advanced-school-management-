@@ -24,6 +24,14 @@ import {
   TeacherSubstitution,
   SubjectAllotment,
   DailyDiary,
+  LeaveRequest,
+  LeaveBalance,
+  SmsRecord,
+  SmsTemplate,
+  MobileNotificationRecord,
+  WhatsAppRecord,
+  TelegramRecord,
+  EmailRecord,
 } from './types';
 import {
   INITIAL_STUDENTS,
@@ -49,6 +57,174 @@ import {
   INITIAL_DIARIES,
 } from './data/mockData';
 
+const INITIAL_LEAVE_REQUESTS: LeaveRequest[] = [
+  {
+    id: 'leave-1',
+    applicantName: 'Tariq Mahmood',
+    role: 'Teacher',
+    departmentOrClass: 'Mathematics Department',
+    leaveType: 'Casual',
+    startDate: '2026-09-22',
+    endDate: '2026-09-24',
+    totalDays: 3,
+    reason: 'Family event in hometown (Lahore). Syllabus syllabus has been caught up.',
+    status: 'Pending',
+    appliedDate: '2026-09-18'
+  },
+  {
+    id: 'leave-2',
+    applicantName: 'Ayesha Bibi',
+    role: 'Teacher',
+    departmentOrClass: 'English Department',
+    leaveType: 'Medical',
+    startDate: '2026-09-19',
+    endDate: '2026-09-20',
+    totalDays: 2,
+    reason: 'Severe migraine headache. Recommended rest by family physician.',
+    status: 'Approved',
+    appliedDate: '2026-09-18',
+    approvedBy: 'Super Admin'
+  },
+  {
+    id: 'leave-3',
+    applicantName: 'Hamza Malik',
+    role: 'Student',
+    departmentOrClass: 'Class Ten-A',
+    leaveType: 'Emergency',
+    startDate: '2026-09-20',
+    endDate: '2026-09-20',
+    totalDays: 1,
+    reason: 'Urgent household errand / parents out of town.',
+    status: 'Rejected',
+    appliedDate: '2026-09-19',
+    rejectionReason: 'Emergency leave without a valid written letter from parent.'
+  }
+];
+
+const INITIAL_LEAVE_BALANCES: LeaveBalance[] = [
+  {
+    id: 'bal-1',
+    employeeName: 'Tariq Mahmood',
+    role: 'Teacher',
+    casual: 8,
+    medical: 6,
+    unpaid: 0,
+    earned: 12,
+    used: 4
+  },
+  {
+    id: 'bal-2',
+    employeeName: 'Ayesha Bibi',
+    role: 'Teacher',
+    casual: 10,
+    medical: 4,
+    unpaid: 1,
+    earned: 15,
+    used: 5
+  },
+  {
+    id: 'bal-3',
+    employeeName: 'Rana Naveed',
+    role: 'Staff',
+    casual: 12,
+    medical: 8,
+    unpaid: 0,
+    earned: 10,
+    used: 2
+  }
+];
+
+// Initial Communication Logs
+const INITIAL_SMS_RECORDS: SmsRecord[] = [
+  {
+    id: 'sms-101',
+    sender: 'Super Admin',
+    recipientType: 'Parent',
+    recipientName: 'Muhammad Ali (Parent of Sarah Ali)',
+    message: 'Dear Parent, fee voucher for Sept 2026 is due. Please clear before 10th to avoid late fee surcharge.',
+    timestamp: '2026-09-18 09:12:44',
+    status: 'Delivered',
+    gatewayResponse: 'SMS_GATEWAY_SUCCESS: OK'
+  },
+  {
+    id: 'sms-102',
+    sender: 'Super Admin',
+    recipientType: 'Staff',
+    recipientName: 'Ayesha Khan (Teacher)',
+    message: 'Respected Staff, the academic meeting is scheduled for 2:00 PM today in the conference room.',
+    timestamp: '2026-09-19 11:30:15',
+    status: 'Sent',
+    gatewayResponse: 'SMS_GATEWAY_SUCCESS: OK'
+  }
+];
+
+const INITIAL_SMS_TEMPLATES: SmsTemplate[] = [
+  {
+    id: 'tmpl-1',
+    title: 'Daily Absent Notification',
+    body: 'Dear Parent, student {student_name} was found ABSENT today without formal leave request. Please check with the school admin.',
+    category: 'Attendance'
+  },
+  {
+    id: 'tmpl-2',
+    title: 'Monthly Fee Reminder',
+    body: 'Dear Parent, tuition fee voucher of PKR {amount} is outstanding for this month. Kindly clear dues before the due date.',
+    category: 'Fee Reminder'
+  },
+  {
+    id: 'tmpl-3',
+    title: 'Exam Result Announcement',
+    body: 'Assalam-o-Alaikum, Exam results have been compiled. Please attend parent-teacher meeting on Saturday to collect report card.',
+    category: 'Exam Result'
+  }
+];
+
+const INITIAL_MOBILE_NOTIFICATIONS: MobileNotificationRecord[] = [
+  {
+    id: 'notif-101',
+    recipientType: 'Parent',
+    recipientName: 'All Registered Parents',
+    title: 'Autumn Vacations Announcement',
+    body: 'Dear parents, please note that school will remain closed from Oct 12th to Oct 16th for autumn break.',
+    timestamp: '2026-09-15 14:05:00',
+    status: 'Delivered'
+  }
+];
+
+const INITIAL_WHATSAPP_RECORDS: WhatsAppRecord[] = [
+  {
+    id: 'wa-101',
+    recipientType: 'Parent',
+    recipientName: 'All Parents Class 10-A',
+    message: 'Dear parents, the class test timetable has been updated. Please verify syllabus details in app.',
+    timestamp: '2026-09-17 10:00:22',
+    status: 'Read'
+  }
+];
+
+const INITIAL_TELEGRAM_RECORDS: TelegramRecord[] = [
+  {
+    id: 'tg-101',
+    recipientType: 'Staff',
+    recipientName: 'All Teaching Staff',
+    message: 'Reminder: Submit question papers for Term-I exams on the web portal by Friday.',
+    timestamp: '2026-09-16 16:30:00',
+    status: 'Sent'
+  }
+];
+
+const INITIAL_EMAIL_RECORDS: EmailRecord[] = [
+  {
+    id: 'mail-101',
+    recipientEmails: 'board@school.edu, principal@school.edu',
+    subject: 'Monthly Institutional Audit Report - Aug 2026',
+    body: 'Respected Sirs, Attached is the comprehensive expenditure and fee recovery ledger report for the month of August 2026.',
+    timestamp: '2026-09-05 18:22:11',
+    status: 'Sent',
+    attachments: 'https://school-portal.com/reports/audit-aug-2026.pdf'
+  }
+];
+
 import LoginScreen from './components/LoginScreen';
 import TopHeader from './components/TopHeader';
 import SidebarNavigation from './components/SidebarNavigation';
@@ -60,6 +236,7 @@ import IDCardPrintingView from './components/IDCardPrintingView';
 import AttendanceView from './components/AttendanceView';
 import FeeManagementView from './components/FeeManagementView';
 import ExamManagementView from './components/ExamManagementView';
+import TestManagementView from './components/TestManagementView';
 import TeacherPortalView from './components/TeacherPortalView';
 import ParentPortalView from './components/ParentPortalView';
 import AcademicOperationsView from './components/AcademicOperationsView';
@@ -68,10 +245,19 @@ import PrintModal from './components/PrintModal';
 import TimetableSubstitutionEngine from './components/TimetableSubstitutionEngine';
 import ClassSubjectManagementView from './components/ClassSubjectManagementView';
 import DailyDiaryHomeworkLmsView from './components/DailyDiaryHomeworkLmsView';
+import DailyHomeworkDiaryView from './components/DailyHomeworkDiaryView';
+import StudyMaterialsView from './components/StudyMaterialsView';
+import LeaveManagementView from './components/LeaveManagementView';
+import SmsManagementView from './components/SmsManagementView';
+import MobileNotificationsView from './components/MobileNotificationsView';
+import WhatsAppNotificationsView from './components/WhatsAppNotificationsView';
+import TelegramNotificationsView from './components/TelegramNotificationsView';
+import EmailAlertsView from './components/EmailAlertsView';
 import PayrollManagementView from './components/PayrollManagementView';
 import AccountsExpenseLedgerView from './components/AccountsExpenseLedgerView';
 import CampusPosStoreView from './components/CampusPosStoreView';
 import CertificatesSlipsView from './components/CertificatesSlipsView';
+import CertificationsView from './components/CertificationsView';
 import TransportManagementView from './components/TransportManagementView';
 import CommunicationsHubView from './components/CommunicationsHubView';
 import LibraryManagementView from './components/LibraryManagementView';
@@ -97,6 +283,18 @@ import FacilityFleetMaintenanceView from './components/FacilityFleetMaintenanceV
 import HostelCafeteriaInventoryView from './components/HostelCafeteriaInventoryView';
 import AIQuestionBankEngineView from './components/AIQuestionBankEngineView';
 import LocalizationPortalView from './components/LocalizationPortalView';
+import {
+  SchoolNoticeBoardView,
+  ManageCampusesView,
+  AdminRoleManagementView,
+  SmsToFeeDefaulterView,
+  BulkFeePaymentView,
+  AdmitStudentFormView,
+  FeeTypesHeadsView,
+  FamilyFeeCalculatorView,
+  ManageBiometricDevicesView,
+  WebsiteManagementView,
+} from './components/DashboardExtensionsSuite';
 
 export default function App() {
   // Authentication & Session State
@@ -128,6 +326,18 @@ export default function App() {
 
   // ID Card Subtab / Action State
   const [idCardAction, setIdCardAction] = useState<'student' | 'staff' | 'settings'>('student');
+
+  // Homework Diary Action State
+  const [diaryAction, setDiaryAction] = useState<'manage' | 'send_sms'>('manage');
+
+  // Study Materials Action State
+  const [studyMaterialsAction, setStudyMaterialsAction] = useState<'browse' | 'upload'>('browse');
+
+  // Leave Management Action State
+  const [leaveAction, setLeaveAction] = useState<'requests' | 'balances' | 'apply'>('requests');
+
+  // Certifications Subtab / Action State
+  const [certificationsAction, setCertificationsAction] = useState<'printing' | 'template' | 'student' | 'staff'>('printing');
 
   // Classes Subtab / Action State
   const [classAction, setClassAction] = useState<'classes' | 'sections' | null>(null);
@@ -166,28 +376,58 @@ export default function App() {
 
   // Exam Action State
   const [examAction, setExamAction] = useState<
-    | 'terms'
+    | 'exam_list'
     | 'marks_entry'
-    | 'timetable'
-    | 'assign_grade_term'
-    | 'assign_grade_final'
+    | 'timetable_add'
+    | 'timetable_manage'
+    | 'grade_particular'
+    | 'grade_final'
     | 'teacher_remarks'
-    | 'tabulation_term'
+    | 'tabulation_particular'
     | 'tabulation_final'
-    | 'positions_term'
+    | 'positions_particular'
     | 'positions_final'
-    | 'admit_cards_term'
+    | 'admit_cards_particular'
     | 'admit_cards_final'
-    | 'sms_term'
+    | 'sms_particular'
     | 'sms_final'
-    | 'marksheet_term'
-    | 'marksheet_final'
+    | 'print_mark_sheets'
+    | 'exam_reports'
     | null
   >(null);
 
   const handleSelectExamAction = (action: any) => {
     setActiveTab('exams');
     setExamAction(action);
+  };
+
+  // Test Action State
+  const [testAction, setTestAction] = useState<
+    | 'tests_list'
+    | 'marks_entry'
+    | 'timetable_add'
+    | 'timetable_manage'
+    | 'schedules_add'
+    | 'schedules_manage'
+    | 'grade_particular'
+    | 'grade_combined'
+    | 'teacher_remarks'
+    | 'tabulation_particular'
+    | 'tabulation_combined'
+    | 'positions_particular'
+    | 'positions_combined'
+    | 'admit_cards_particular'
+    | 'admit_cards_combined'
+    | 'sms_particular'
+    | 'sms_combined'
+    | 'print_mark_sheets'
+    | 'test_reports'
+    | null
+  >(null);
+
+  const handleSelectTestAction = (action: any) => {
+    setActiveTab('tests');
+    setTestAction(action);
   };
 
   const handleSelectAdmissionSubTab = (
@@ -301,6 +541,24 @@ export default function App() {
   const [inventory, setInventory] = useState<InventoryProduct[]>(INITIAL_INVENTORY);
   const [complaints, setComplaints] = useState(INITIAL_COMPLAINTS);
   const [notices, setNotices] = useState(INITIAL_NOTICES);
+
+  // Leave Management States
+  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(INITIAL_LEAVE_REQUESTS);
+  const [leaveBalances, setLeaveBalances] = useState<LeaveBalance[]>(INITIAL_LEAVE_BALANCES);
+
+  // Communications & Notifications Hub States
+  const [smsHistory, setSmsHistory] = useState<SmsRecord[]>(INITIAL_SMS_RECORDS);
+  const [smsTemplates, setSmsTemplates] = useState<SmsTemplate[]>(INITIAL_SMS_TEMPLATES);
+  const [mobileNotificationHistory, setMobileNotificationHistory] = useState<MobileNotificationRecord[]>(INITIAL_MOBILE_NOTIFICATIONS);
+  const [whatsappHistory, setWhatsappHistory] = useState<WhatsAppRecord[]>(INITIAL_WHATSAPP_RECORDS);
+  const [telegramHistory, setTelegramHistory] = useState<TelegramRecord[]>(INITIAL_TELEGRAM_RECORDS);
+  const [emailHistory, setEmailHistory] = useState<EmailRecord[]>(INITIAL_EMAIL_RECORDS);
+
+  const [smsAction, setSmsAction] = useState<'parents' | 'students' | 'staff' | 'specific' | 'templates' | 'history'>('parents');
+  const [mobileAction, setMobileAction] = useState<'parents' | 'staff' | 'students' | 'history'>('parents');
+  const [whatsappAction, setWhatsappAction] = useState<'parents' | 'staff' | 'history'>('parents');
+  const [telegramAction, setTelegramAction] = useState<'parents' | 'staff' | 'history'>('parents');
+  const [emailAction, setEmailAction] = useState<'specific' | 'history'>('specific');
 
   // Phase 4 Academic Operations, Timetable & Substitution State
   const [timetable, setTimetable] = useState<TimetablePeriod[]>(INITIAL_TIMETABLE);
@@ -588,6 +846,15 @@ export default function App() {
         <SidebarNavigation
           activeTab={activeTab}
           onSelectTab={setActiveTab}
+          onSelectDiaryAction={setDiaryAction}
+          onSelectStudyMaterialsAction={setStudyMaterialsAction}
+          onSelectLeaveAction={setLeaveAction}
+          onSelectSmsAction={setSmsAction}
+          onSelectMobileAction={setMobileAction}
+          onSelectWhatsappAction={setWhatsappAction}
+          onSelectTelegramAction={setTelegramAction}
+          onSelectEmailAction={setEmailAction}
+          onSelectCertificationsAction={setCertificationsAction}
           onSelectAdmissionSubTab={handleSelectAdmissionSubTab}
           onSelectStudentAction={handleSelectStudentAction}
           onSelectParentAction={handleSelectParentAction}
@@ -597,6 +864,7 @@ export default function App() {
           onSelectTimetableAction={handleSelectTimetableAction}
           onSelectFeeAction={handleSelectFeeAction}
           onSelectExamAction={handleSelectExamAction}
+          onSelectTestAction={handleSelectTestAction}
           complaintsCount={unreadComplaints}
           unpaidFeesCount={unpaidCount}
           isCollapsed={isCollapsed}
@@ -629,6 +897,72 @@ export default function App() {
               onAdmitClick={() => setActiveTab('admissions')}
               onPrintVoucher={(v) => setPrintModalConfig({ isOpen: true, type: 'fee_voucher', data: v })}
               onPrintIdCard={(std) => setPrintModalConfig({ isOpen: true, type: 'id_card', data: std })}
+            />
+          )}
+
+          {/* Dashboard Extensions: School Notice Board */}
+          {activeTab === 'school_notice_board' && (
+            <SchoolNoticeBoardView
+              initialNotices={notices}
+              onAddNotice={(n) => setNotices((prev) => [n, ...prev])}
+              onDeleteNotice={(id) => setNotices((prev) => prev.filter((notice) => notice.id !== id))}
+            />
+          )}
+
+          {/* Dashboard Extensions: Manage Campuses */}
+          {activeTab === 'manage_campuses' && (
+            <ManageCampusesView
+              initialCampuses={campuses}
+              onAddCampus={(c) => setCampuses((prev) => [...prev, c])}
+            />
+          )}
+
+          {/* Dashboard Extensions: Admin Role Management */}
+          {activeTab === 'admin_roles' && (
+            <AdminRoleManagementView />
+          )}
+
+          {/* Dashboard Extensions: SMS Defaulters */}
+          {activeTab === 'sms_defaulters' && (
+            <SmsToFeeDefaulterView
+              students={students}
+            />
+          )}
+
+          {/* Dashboard Extensions: Bulk Fee Payment */}
+          {activeTab === 'bulk_fee_payment' && (
+            <BulkFeePaymentView />
+          )}
+
+          {/* Dashboard Extensions: Admit Student Form */}
+          {activeTab === 'admit_student_form' && (
+            <AdmitStudentFormView
+              onAdmitSubmit={(std) => {
+                handleAddStudent(std);
+                setActiveTab('students');
+              }}
+            />
+          )}
+
+          {/* Dashboard Extensions: Fee Types / Heads */}
+          {activeTab === 'fee_types_heads' && (
+            <FeeTypesHeadsView />
+          )}
+
+          {/* Dashboard Extensions: Family Fee Calculator */}
+          {activeTab === 'family_fee_calculator' && (
+            <FamilyFeeCalculatorView />
+          )}
+
+          {/* Dashboard Extensions: Manage Biometric Devices */}
+          {activeTab === 'manage_biometric_devices' && (
+            <ManageBiometricDevicesView />
+          )}
+
+          {/* Dashboard Extensions: Website Management */}
+          {activeTab === 'website_management' && (
+            <WebsiteManagementView
+              initialClasses={classes}
             />
           )}
 
@@ -671,6 +1005,121 @@ export default function App() {
               onPrintSingleCard={(data, type) =>
                 setPrintModalConfig({ isOpen: true, type: 'id_card', data })
               }
+            />
+          )}
+
+          {/* Daily Homework Diary Hub (Super Admin submenu) */}
+          {activeTab === 'daily_homework_diary' && (
+            <DailyHomeworkDiaryView
+              diaryList={diaryList}
+              students={students}
+              classes={classes}
+              onAddDiary={(entry) => setDiaryList((prev) => [entry, ...prev])}
+              onUpdateDiary={setDiaryList}
+              initialAction={diaryAction}
+            />
+          )}
+
+          {/* Study Materials Hub (Super Admin submenu) */}
+          {activeTab === 'study_materials' && (
+            <StudyMaterialsView
+              materials={materials}
+              classes={classes}
+              onAddMaterial={(mat) =>
+                setMaterials((prev) => [{ ...mat, id: `mat-${Date.now()}` }, ...prev])
+              }
+              onDeleteMaterial={(id) =>
+                setMaterials((prev) => prev.filter((m) => m.id !== id))
+              }
+              initialAction={studyMaterialsAction}
+            />
+          )}
+
+          {/* Leave Management Hub (Super Admin submenu) */}
+          {activeTab === 'leave_management' && (
+            <LeaveManagementView
+              leaveRequests={leaveRequests}
+              leaveBalances={leaveBalances}
+              onAddLeaveRequest={(newReq) => setLeaveRequests((prev) => [newReq, ...prev])}
+              onUpdateLeaveStatus={(id, status, comment, approver) => {
+                setLeaveRequests((prev) =>
+                  prev.map((r) =>
+                    r.id === id
+                      ? { ...r, status, approvedBy: approver || 'Admin', rejectionReason: status === 'Rejected' ? comment : undefined }
+                      : r
+                  )
+                );
+              }}
+              onAdjustBalance={(id, field, val) => {
+                setLeaveBalances((prev) =>
+                  prev.map((b) => {
+                    if (b.id === id) {
+                      const currentVal = b[field] || 0;
+                      const nextVal = Math.max(0, currentVal + val);
+                      return { ...b, [field]: nextVal };
+                    }
+                    return b;
+                  })
+                );
+              }}
+              initialAction={leaveAction}
+            />
+          )}
+
+          {/* SMS Management (Carrier gateway) */}
+          {activeTab === 'sms_management' && (
+            <SmsManagementView
+              smsHistory={smsHistory}
+              smsTemplates={smsTemplates}
+              onSendSms={(rec) => setSmsHistory((prev) => [rec, ...prev])}
+              onAddTemplate={(tmpl) => setSmsTemplates((prev) => [tmpl, ...prev])}
+              onDeleteTemplate={(id) => setSmsTemplates((prev) => prev.filter((t) => t.id !== id))}
+              initialAction={smsAction}
+            />
+          )}
+
+          {/* Mobile App Notifications */}
+          {activeTab === 'mobile_notifications' && (
+            <MobileNotificationsView
+              notificationHistory={mobileNotificationHistory}
+              onSendNotification={(rec) => setMobileNotificationHistory((prev) => [rec, ...prev])}
+              initialAction={mobileAction}
+            />
+          )}
+
+          {/* WhatsApp Notifications */}
+          {activeTab === 'whatsapp_notifications' && (
+            <WhatsAppNotificationsView
+              whatsappHistory={whatsappHistory}
+              onSendMessage={(rec) => setWhatsappHistory((prev) => [rec, ...prev])}
+              initialAction={whatsappAction}
+            />
+          )}
+
+          {/* Telegram Notifications */}
+          {activeTab === 'telegram_notifications' && (
+            <TelegramNotificationsView
+              telegramHistory={telegramHistory}
+              onSendMessage={(rec) => setTelegramHistory((prev) => [rec, ...prev])}
+              initialAction={telegramAction}
+            />
+          )}
+
+          {/* Email Alerts */}
+          {activeTab === 'email_alerts' && (
+            <EmailAlertsView
+              emailHistory={emailHistory}
+              onSendEmail={(rec) => setEmailHistory((prev) => [rec, ...prev])}
+              initialAction={emailAction}
+            />
+          )}
+
+          {/* Main Certifications Hub */}
+          {activeTab === 'certifications_hub' && (
+            <CertificationsView
+              students={students}
+              staff={staff}
+              initialAction={certificationsAction}
             />
           )}
 
@@ -744,6 +1193,13 @@ export default function App() {
                   prev.map((m) => (m.id === id ? { ...m, totalObtained: obtained } : m))
                 );
               }}
+            />
+          )}
+
+          {/* View Tab: Test Management */}
+          {activeTab === 'tests' && (
+            <TestManagementView
+              activeAction={testAction}
             />
           )}
 

@@ -46,7 +46,7 @@ export default function TransportManagementView({
   students,
   onAddExpense,
 }: TransportManagementViewProps) {
-  const [activeTab, setActiveTab] = useState<'routes' | 'fleet' | 'students' | 'gps' | 'fuel'>('routes');
+  const [activeTab, setActiveTab] = useState<'routes' | 'fleet' | 'students' | 'gps' | 'fuel' | 'report'>('routes');
 
   // Stores
   const [vehicles, setVehicles] = useState<TransportVehicle[]>(INITIAL_VEHICLES);
@@ -287,6 +287,19 @@ export default function TransportManagementView({
         >
           <Fuel className="w-4 h-4 text-amber-300" />
           <span>Fuel &amp; Maintenance Ledger</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('report')}
+          className={`px-3.5 py-2 rounded-md transition flex items-center gap-1.5 ${
+            activeTab === 'report'
+              ? 'bg-[#002147] text-white font-bold shadow-xs'
+              : 'text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <FileSpreadsheet className="w-4 h-4 text-violet-400" />
+          <span>Transport Report</span>
         </button>
       </div>
 
@@ -1191,6 +1204,177 @@ export default function TransportManagementView({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* ============================================================ */}
+      {/* TAB 6: TRANSPORT REPORT & FINANCIAL SUMMARY */}
+      {/* ============================================================ */}
+      {activeTab === 'report' && (
+        <div className="space-y-4 text-xs">
+          <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-2xs">
+            <div className="flex justify-between items-center border-b pb-3 mb-4">
+              <div>
+                <h3 className="text-sm font-bold text-slate-800">Route Efficiency &amp; Financial Analytical Ledger</h3>
+                <p className="text-[10px] text-slate-500">Comprehensive overview of route capacity, monthly recoveries, and fleet maintenance overheads.</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    alert('Exporting Transport Report to Microsoft Excel Worksheet (XLSX)...');
+                  }}
+                  className="px-2.5 py-1.5 bg-white border hover:bg-slate-50 text-slate-700 rounded font-bold flex items-center gap-1 transition"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Export Excel</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.print();
+                  }}
+                  className="px-2.5 py-1.5 bg-[#002147] hover:bg-black text-white rounded font-bold flex items-center gap-1 transition"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Print Report</span>
+                </button>
+              </div>
+            </div>
+
+            {/* KPI Widgets */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+              <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                <span className="text-[10px] uppercase font-black text-emerald-800 block">Total Est. Fare Collection</span>
+                <span className="text-base font-black text-emerald-950 block mt-1">PKR 485,000 / month</span>
+                <div className="text-[9px] text-emerald-700 mt-1">98.2% Fee recovery target achieved</div>
+              </div>
+
+              <div className="p-3 bg-red-50 rounded-lg border border-red-100">
+                <span className="text-[10px] uppercase font-black text-red-800 block">Logged Fuel Expense</span>
+                <span className="text-base font-black text-red-950 block mt-1">
+                  PKR {fuelLogs.reduce((acc, f) => acc + f.totalCost, 0).toLocaleString()}
+                </span>
+                <div className="text-[9px] text-red-700 mt-1">Based on {fuelLogs.length} recent refuel logs</div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-lg border border-sky-100">
+                <span className="text-[10px] uppercase font-black text-sky-800 block">Average Fleet Occupancy</span>
+                <span className="text-base font-black text-sky-950 block mt-1">84.5%</span>
+                <div className="text-[9px] text-sky-700 mt-1">112 Students registered of 135 capacity</div>
+              </div>
+
+              <div className="p-3 bg-amber-50 rounded-lg border border-amber-100">
+                <span className="text-[10px] uppercase font-black text-amber-800 block">Fleet Operational Margin</span>
+                <span className="text-base font-black text-amber-950 block mt-1">PKR 292,500</span>
+                <div className="text-[9px] text-amber-700 mt-1">After fuel and driver salary logs</div>
+              </div>
+            </div>
+
+            {/* Financial Spreadsheet Table */}
+            <div className="border rounded-lg overflow-hidden mb-4">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="p-2.5 font-black text-slate-700">Route Info</th>
+                    <th className="p-2.5 font-black text-slate-700 text-center">Enrolled Pupils</th>
+                    <th className="p-2.5 font-black text-slate-700 text-right">Est. Monthly Fare (PKR)</th>
+                    <th className="p-2.5 font-black text-slate-700 text-right">Fuel Logged (PKR)</th>
+                    <th className="p-2.5 font-black text-slate-700 text-right">Driver Wages (PKR)</th>
+                    <th className="p-2.5 font-black text-slate-700 text-right">Net Margin</th>
+                    <th className="p-2.5 font-black text-slate-700 text-center">Route Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {routes.map((rt) => {
+                    const enrCount = enrollments.filter((e) => e.routeId === rt.id).length;
+                    const routeFuel = fuelLogs
+                      .filter((f) => f.vehicleNo === rt.vehicleNo)
+                      .reduce((acc, fl) => acc + fl.totalCost, 0);
+                    const estFare = rt.monthlyFare * (enrCount || 15);
+                    const driverSalary = 35000;
+                    const netMargin = estFare - routeFuel - driverSalary;
+                    const isProfit = netMargin > 0;
+
+                    return (
+                      <tr key={rt.id} className="hover:bg-slate-50 font-mono text-[11px]">
+                        <td className="p-2.5 font-sans font-bold text-slate-900">
+                          <div>{rt.routeName}</div>
+                          <div className="text-[9px] text-slate-500 font-normal mt-0.5">
+                            Van {rt.vehicleNo} • Route Code: {rt.routeCode}
+                          </div>
+                        </td>
+                        <td className="p-2.5 text-center font-sans font-semibold text-slate-800">
+                          {enrCount || 15} Students
+                        </td>
+                        <td className="p-2.5 text-right font-semibold text-emerald-800">
+                          PKR {estFare.toLocaleString()}
+                        </td>
+                        <td className="p-2.5 text-right text-red-700">
+                          PKR {routeFuel.toLocaleString()}
+                        </td>
+                        <td className="p-2.5 text-right text-slate-600">
+                          PKR {driverSalary.toLocaleString()}
+                        </td>
+                        <td className={`p-2.5 text-right font-black ${isProfit ? 'text-emerald-700' : 'text-red-700'}`}>
+                          PKR {netMargin.toLocaleString()}
+                        </td>
+                        <td className="p-2.5 text-center">
+                          <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-100 text-emerald-900 border border-emerald-300">
+                            Profit-Making
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Driver Performance Matrix */}
+            <div className="bg-slate-50 p-3 rounded-lg border">
+              <h4 className="text-xs font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+                <Users className="w-4 h-4 text-slate-600" />
+                <span>Driver Road Compliance &amp; Punctuality Matrix</span>
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="bg-white p-2.5 rounded border border-slate-200">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-slate-800">Driver: Muhammad Altaf</span>
+                    <span className="text-xs text-emerald-600 font-black">4.9 ★</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1">Route Code: RT-01 • Vehicle: LXT-2026</p>
+                  <div className="mt-2 text-[9px] text-emerald-800 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Speed compliance check: 100% OK</span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-2.5 rounded border border-slate-200">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-slate-800">Driver: Sajjad Bhatti</span>
+                    <span className="text-xs text-emerald-600 font-black">4.7 ★</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1">Route Code: RT-02 • Vehicle: LZR-7110</p>
+                  <div className="mt-2 text-[9px] text-emerald-800 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Speed compliance check: 100% OK</span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-2.5 rounded border border-slate-200">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-slate-800">Driver: Riaz Ahmed</span>
+                    <span className="text-xs text-amber-600 font-black">4.3 ★</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1">Route Code: RT-03 • Vehicle: LHA-4200</p>
+                  <div className="mt-2 text-[9px] text-amber-800 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    <span>Minor delay logs (due to road repairs)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -48,23 +48,24 @@ export default function ExamManagementView({
 }: ExamManagementViewProps) {
   // Broad list of all active tabs corresponding to the requested Exam / Test Management Submenu
   const [activeTab, setActiveTab] = useState<
-    | 'terms'
-    | 'marks'
-    | 'datesheet'
-    | 'assign_grade_term'
-    | 'assign_grade_final'
+    | 'exam_list'
+    | 'marks_entry'
+    | 'timetable_add'
+    | 'timetable_manage'
+    | 'grade_particular'
+    | 'grade_final'
     | 'teacher_remarks'
-    | 'tabulation_term'
+    | 'tabulation_particular'
     | 'tabulation_final'
-    | 'positions_term'
+    | 'positions_particular'
     | 'positions_final'
-    | 'admit_cards_term'
+    | 'admit_cards_particular'
     | 'admit_cards_final'
-    | 'sms_term'
+    | 'sms_particular'
     | 'sms_final'
-    | 'marksheet_term'
-    | 'marksheet_final'
-  >('terms');
+    | 'print_mark_sheets'
+    | 'exam_reports'
+  >('exam_list');
 
   const [selectedExam, setSelectedExam] = useState('Mid-Term Assessment 2024');
   const [selectedClass, setSelectedClass] = useState('Class One');
@@ -131,17 +132,12 @@ export default function ExamManagementView({
 
   // Selected Report Card / Marksheet Preview
   const [selectedReportCard, setSelectedReportCard] = useState<StudentMarkEntry | null>(null);
+  const [selectedReportType, setSelectedReportType] = useState<'term' | 'final'>('term');
 
   // Synchronize top-level sidebar interactions to internal sub-tabs
   useEffect(() => {
     if (activeAction) {
-      if (activeAction === 'marks_entry') {
-        setActiveTab('marks');
-      } else if (activeAction === 'timetable') {
-        setActiveTab('datesheet');
-      } else {
-        setActiveTab(activeAction as any);
-      }
+      setActiveTab(activeAction as any);
     }
   }, [activeAction]);
 
@@ -278,22 +274,22 @@ export default function ExamManagementView({
       <div className="bg-white rounded-lg border border-slate-200 p-2 shadow-xs flex flex-wrap items-center gap-1.5 text-xs font-medium">
         <button
           type="button"
-          onClick={() => setActiveTab('terms')}
+          onClick={() => setActiveTab('exam_list')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'terms'
+            activeTab === 'exam_list'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Calendar className="w-4 h-4" />
-          <span>Semester / Term List</span>
+          <span>Exam List</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('marks')}
+          onClick={() => setActiveTab('marks_entry')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'marks'
+            activeTab === 'marks_entry'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
@@ -304,41 +300,54 @@ export default function ExamManagementView({
 
         <button
           type="button"
-          onClick={() => setActiveTab('datesheet')}
+          onClick={() => setActiveTab('timetable_add')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'datesheet'
+            activeTab === 'timetable_add'
+              ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
+              : 'text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <Plus className="w-4 h-4 text-emerald-500" />
+          <span>Add Timetable</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('timetable_manage')}
+          className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
+            activeTab === 'timetable_manage'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Clock className="w-4 h-4 text-sky-400" />
-          <span>Exam Timetable</span>
+          <span>Manage Timetable</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('assign_grade_term')}
+          onClick={() => setActiveTab('grade_particular')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'assign_grade_term'
+            activeTab === 'grade_particular'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Sliders className="w-4 h-4 text-teal-400" />
-          <span>Assign Grade (Term-wise)</span>
+          <span>Assign Grade (Particular Exam)</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('assign_grade_final')}
+          onClick={() => setActiveTab('grade_final')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'assign_grade_final'
+            activeTab === 'grade_final'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Award className="w-4 h-4 text-amber-500" />
-          <span>Assign Grade (Final)</span>
+          <span>Assign Grade (Final Result)</span>
         </button>
 
         <button
@@ -356,15 +365,15 @@ export default function ExamManagementView({
 
         <button
           type="button"
-          onClick={() => setActiveTab('tabulation_term')}
+          onClick={() => setActiveTab('tabulation_particular')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'tabulation_term'
+            activeTab === 'tabulation_particular'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-          <span>Tabulation (Term)</span>
+          <span>Tabulation (Particular Exam)</span>
         </button>
 
         <button
@@ -377,20 +386,20 @@ export default function ExamManagementView({
           }`}
         >
           <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-          <span>Tabulation (Final)</span>
+          <span>Tabulation (Final Result)</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('positions_term')}
+          onClick={() => setActiveTab('positions_particular')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'positions_term'
+            activeTab === 'positions_particular'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Medal className="w-4 h-4 text-amber-500" />
-          <span>Positions (Term)</span>
+          <span>Positions (Particular Exam)</span>
         </button>
 
         <button
@@ -403,20 +412,20 @@ export default function ExamManagementView({
           }`}
         >
           <Medal className="w-4 h-4 text-yellow-500" />
-          <span>Positions (Final Result)</span>
+          <span>Positions (Final Exam)</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('admit_cards_term')}
+          onClick={() => setActiveTab('admit_cards_particular')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'admit_cards_term'
+            activeTab === 'admit_cards_particular'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <ShieldCheck className="w-4 h-4 text-indigo-400" />
-          <span>Admit Cards (Term)</span>
+          <span>Admit Cards (Particular Exam)</span>
         </button>
 
         <button
@@ -429,20 +438,20 @@ export default function ExamManagementView({
           }`}
         >
           <ShieldCheck className="w-4 h-4 text-rose-400" />
-          <span>Admit Cards (Final)</span>
+          <span>Admit Cards (Final Exam)</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('sms_term')}
+          onClick={() => setActiveTab('sms_particular')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'sms_term'
+            activeTab === 'sms_particular'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Send className="w-4 h-4 text-purple-400" />
-          <span>SMS Marks (Term)</span>
+          <span>SMS Marks (Particular Exam)</span>
         </button>
 
         <button
@@ -455,33 +464,33 @@ export default function ExamManagementView({
           }`}
         >
           <Send className="w-4 h-4 text-orange-400" />
-          <span>SMS (Final Exam)</span>
+          <span>SMS (Final Result)</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('marksheet_term')}
+          onClick={() => setActiveTab('print_mark_sheets')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'marksheet_term'
+            activeTab === 'print_mark_sheets'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Sparkles className="w-4 h-4 text-violet-400" />
-          <span>Print Marksheet (Term)</span>
+          <span>Print Mark Sheets</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('marksheet_final')}
+          onClick={() => setActiveTab('exam_reports')}
           className={`px-3 py-2 rounded-md transition flex items-center gap-1.5 ${
-            activeTab === 'marksheet_final'
+            activeTab === 'exam_reports'
               ? 'bg-[#1b3b6f] text-white font-bold shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span>Print Marksheet (Final)</span>
+          <BarChart3 className="w-4 h-4 text-indigo-400" />
+          <span>Exam Reports</span>
         </button>
       </div>
 
@@ -566,7 +575,7 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 1: EXAM TERM / SEMESTER LIST */}
       {/* ============================================================ */}
-      {activeTab === 'terms' && (
+      {activeTab === 'exam_list' && (
         <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden p-4 space-y-4">
           <div className="flex items-center justify-between border-b pb-3">
             <div>
@@ -731,7 +740,7 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 2: MARKS ENTRY */}
       {/* ============================================================ */}
-      {activeTab === 'marks' && (
+      {activeTab === 'marks_entry' && (
         <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden text-xs">
           <div className="p-3 bg-slate-50 border-b flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -898,9 +907,163 @@ export default function ExamManagementView({
       )}
 
       {/* ============================================================ */}
-      {/* PAGE 3: EXAM TIMETABLE */}
+      {/* PAGE 3A: ADD EXAM TIMETABLE */}
       {/* ============================================================ */}
-      {activeTab === 'datesheet' && (
+      {activeTab === 'timetable_add' && (
+        <div className="bg-white rounded-lg border border-slate-200 shadow-xs p-5 max-w-xl mx-auto space-y-4">
+          <div className="border-b pb-3 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-emerald-600" />
+                <span>Configure Exam Timetable Slot</span>
+              </h3>
+              <p className="text-xs text-slate-500">Add an official paper date, timing block, and supervisor for {selectedClass}.</p>
+            </div>
+          </div>
+
+          <form onSubmit={(e) => {
+            handleAddPaper(e);
+            setActiveTab('timetable_manage');
+          }} className="space-y-4 text-xs">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Subject Name</label>
+              <input
+                type="text"
+                required
+                value={paperForm.subject || ''}
+                onChange={(e) => setPaperForm({ ...paperForm, subject: e.target.value })}
+                placeholder="e.g. Computer Science / Social Studies / Physics"
+                className="w-full px-3 py-2 border rounded"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Exam Date</label>
+                <input
+                  type="date"
+                  required
+                  value={paperForm.paperDate || ''}
+                  onChange={(e) => setPaperForm({ ...paperForm, paperDate: e.target.value })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Day of Week</label>
+                <select
+                  value={paperForm.dayOfWeek || 'Monday'}
+                  onChange={(e) => setPaperForm({ ...paperForm, dayOfWeek: e.target.value })}
+                  className="w-full px-3 py-2 border rounded bg-white font-semibold"
+                >
+                  <option value="Monday">Monday</option>
+                  <option value="Tuesday">Tuesday</option>
+                  <option value="Wednesday">Wednesday</option>
+                  <option value="Thursday">Thursday</option>
+                  <option value="Friday">Friday</option>
+                  <option value="Saturday">Saturday</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Start Time</label>
+                <input
+                  type="text"
+                  value={paperForm.startTime || '08:30 AM'}
+                  onChange={(e) => setPaperForm({ ...paperForm, startTime: e.target.value })}
+                  className="w-full px-3 py-2 border rounded font-mono"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">End Time</label>
+                <input
+                  type="text"
+                  value={paperForm.endTime || '11:00 AM'}
+                  onChange={(e) => setPaperForm({ ...paperForm, endTime: e.target.value })}
+                  className="w-full px-3 py-2 border rounded font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Total Marks</label>
+                <input
+                  type="number"
+                  value={paperForm.totalMarks || 100}
+                  onChange={(e) => setPaperForm({ ...paperForm, totalMarks: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Passing Marks</label>
+                <input
+                  type="number"
+                  value={paperForm.passingMarks || 40}
+                  onChange={(e) => setPaperForm({ ...paperForm, passingMarks: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Room / Exam Hall</label>
+                <input
+                  type="text"
+                  value={paperForm.roomNo || ''}
+                  onChange={(e) => setPaperForm({ ...paperForm, roomNo: e.target.value })}
+                  placeholder="e.g. Room 102 / Hall-A"
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Invigilator Staff</label>
+                <input
+                  type="text"
+                  value={paperForm.invigilatorName || ''}
+                  onChange={(e) => setPaperForm({ ...paperForm, invigilatorName: e.target.value })}
+                  placeholder="e.g. Ms. Hina Qureshi"
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Special Syllabus Instructions</label>
+              <textarea
+                value={paperForm.instructions || ''}
+                onChange={(e) => setPaperForm({ ...paperForm, instructions: e.target.value })}
+                placeholder="e.g. Syllabus Chapter 1 to 5. Bring geometry kit."
+                rows={3}
+                className="w-full px-3 py-2 border rounded"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button
+                type="button"
+                onClick={() => setActiveTab('timetable_manage')}
+                className="px-4 py-2 border rounded text-slate-600 hover:bg-slate-50 font-medium"
+              >
+                View Existing Timetable
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold shadow"
+              >
+                Schedule &amp; Add Paper Slot
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* PAGE 3B: EXAM TIMETABLE MANAGE */}
+      {/* ============================================================ */}
+      {activeTab === 'timetable_manage' && (
         <div className="space-y-4">
           <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -915,7 +1078,7 @@ export default function ExamManagementView({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setNewPaperModal(true)}
+                onClick={() => setActiveTab('timetable_add')}
                 className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold text-xs flex items-center gap-1.5 shadow"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -944,6 +1107,7 @@ export default function ExamManagementView({
                   <th className="py-2.5 px-3">Exam Hall / Room</th>
                   <th className="py-2.5 px-3">Invigilator Staff</th>
                   <th className="py-2.5 px-3">Syllabus Remarks</th>
+                  <th className="py-2.5 px-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -964,7 +1128,7 @@ export default function ExamManagementView({
                         {paper.startTime} - {paper.endTime}
                       </span>
                     </td>
-                    <td className="py-3 px-3 text-center font-mono font-bold text-slate-800 font-bold">
+                    <td className="py-3 px-3 text-center font-mono font-bold text-slate-800">
                       {paper.totalMarks}
                       <span className="text-[10px] text-slate-400 block font-normal">
                         Pass: {paper.passingMarks}
@@ -983,6 +1147,15 @@ export default function ExamManagementView({
                       </span>
                     </td>
                     <td className="py-3 px-3 text-slate-500 text-[11px] max-w-xs">{paper.instructions}</td>
+                    <td className="py-3 px-3 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setDatesheet(datesheet.filter((d) => d.id !== paper.id))}
+                        className="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold border border-rose-200 rounded transition"
+                      >
+                        Remove
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1097,11 +1270,11 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 4: ASSIGN GRADE - TERM / SEMESTER WISE */}
       {/* ============================================================ */}
-      {activeTab === 'assign_grade_term' && (
+      {activeTab === 'grade_particular' && (
         <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Assign Grade — Term / Semester Wise</h3>
-            <p className="text-xs text-slate-500">Configure grading ranges for the active term and automatically apply grades to candidates.</p>
+            <h3 className="text-sm font-bold text-slate-800">Assign Grade — Particular Exam</h3>
+            <p className="text-xs text-slate-500">Configure grading ranges for the active exam and automatically apply grades to candidates.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -1181,7 +1354,7 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 5: ASSIGN GRADE - FOR FINAL RESULT */}
       {/* ============================================================ */}
-      {activeTab === 'assign_grade_final' && (
+      {activeTab === 'grade_final' && (
         <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-4">
           <div>
             <h3 className="text-sm font-bold text-slate-800">Assign Grade — Cumulative Annual Final Result</h3>
@@ -1385,14 +1558,14 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 7: TABULATION SHEET - TERM / SEMESTER WISE */}
       {/* ============================================================ */}
-      {activeTab === 'tabulation_term' && (
+      {activeTab === 'tabulation_particular' && (
         <div className="bg-white rounded-lg border border-slate-200 p-5 shadow-xs space-y-4 text-xs">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
             <div>
               <div className="flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5 text-emerald-700" />
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
-                  Master Tabulation Broadsheet — Term Wise
+                  Master Tabulation Broadsheet — Particular Exam
                 </h3>
               </div>
               <p className="text-slate-500 text-[11px] mt-0.5">
@@ -1584,14 +1757,14 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 9: POSITION HOLDER - TERM / SEMESTER WISE */}
       {/* ============================================================ */}
-      {activeTab === 'positions_term' && (
+      {activeTab === 'positions_particular' && (
         <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-4 text-xs">
           <div>
             <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
               <Medal className="w-5 h-5 text-amber-500 animate-bounce" />
-              <span>Academic High-Achievers &amp; Position Holders — Term Wise</span>
+              <span>Academic High-Achievers &amp; Position Holders — Particular Exam</span>
             </h3>
-            <p className="text-xs text-slate-500">Board toppers, subject highest-achievers, and honor-roll citations for {selectedExam}.</p>
+            <p className="text-xs text-slate-500">Board toppers, subject highest-achievers, and honor-roll citations for the active exam.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
@@ -1723,15 +1896,15 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 11: PRINT ADMIT CARDS - TERM / SEMESTER WISE */}
       {/* ============================================================ */}
-      {activeTab === 'admit_cards_term' && (
+      {activeTab === 'admit_cards_particular' && (
         <div className="space-y-4">
           <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-bold text-slate-800">
-                Examination Admit Slips — Term {selectedExam}
+                Examination Admit Slips — Particular Exam {selectedExam}
               </h3>
               <p className="text-slate-500 text-xs">
-                Candidate entry pass with barcode clearance for the respective term exams.
+                Candidate entry pass with barcode clearance for the respective exams.
               </p>
             </div>
 
@@ -1893,10 +2066,10 @@ export default function ExamManagementView({
       {/* ============================================================ */}
       {/* PAGE 13: SEND MARKS BY SMS - TERM / SEMESTER WISE */}
       {/* ============================================================ */}
-      {activeTab === 'sms_term' && (
+      {activeTab === 'sms_particular' && (
         <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-4 text-xs">
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Broadcast Academic Results by SMS — Term Wise</h3>
+            <h3 className="text-sm font-bold text-slate-800">Broadcast Academic Results by SMS — Particular Exam</h3>
             <p className="text-xs text-slate-500">Instantly notify parents of their child's subject scores and grading statistics via the SMS Gateway.</p>
           </div>
 
@@ -2032,21 +2205,42 @@ export default function ExamManagementView({
       )}
 
       {/* ============================================================ */}
-      {/* PAGE 15: PRINT MARK SHEETS - TERM / SEMESTER WISE */}
+      {/* PAGE 15: UNIFIED PRINT MARK SHEETS (TERM-WISE & FINAL RESULT) */}
       {/* ============================================================ */}
-      {activeTab === 'marksheet_term' && (
+      {activeTab === 'print_mark_sheets' && (
         <div className="space-y-4">
           <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-bold text-slate-800">
-                Official Student Progress Report Card / Mark Sheet — Term Wise
+                Official Student Progress Report Card &amp; Mark Sheets
               </h3>
               <p className="text-slate-500 text-xs">
-                Select a student below to inspect or print the comprehensive term card
+                Inspect and print progress cards. Toggle between a single Exam Term or Cumulative Final Result.
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex rounded-md shadow-xs bg-slate-100 p-1 mr-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setSelectedReportType('term')}
+                  className={`px-3 py-1 rounded-md transition font-bold ${
+                    selectedReportType === 'term' ? 'bg-white text-[#1b3b6f] shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Term Sheet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedReportType('final')}
+                  className={`px-3 py-1 rounded-md transition font-bold ${
+                    selectedReportType === 'final' ? 'bg-white text-[#1b3b6f] shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Cumulative Final
+                </button>
+              </div>
+
               <select
                 value={selectedReportCard?.id || filteredMarks[0]?.id || ''}
                 onChange={(e) => {
@@ -2071,7 +2265,7 @@ export default function ExamManagementView({
                 className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold text-xs flex items-center gap-1.5 shadow"
               >
                 <Printer className="w-3.5 h-3.5" />
-                <span>Print Term Sheet</span>
+                <span>Print Official Sheet</span>
               </button>
             </div>
           </div>
@@ -2087,239 +2281,330 @@ export default function ExamManagementView({
               );
             }
 
-            return (
-              <div className="bg-white rounded-xl border-2 border-slate-300 p-6 shadow-md max-w-4xl mx-auto space-y-5 text-xs text-slate-800">
-                {/* School Header */}
-                <div className="border-b-2 border-slate-900 pb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-emerald-800 text-amber-300 flex items-center justify-center font-black text-base shadow">TE</div>
-                    <div>
-                      <h2 className="font-black text-lg text-slate-900 tracking-wide uppercase">THE EDUCATORS</h2>
-                      <div className="text-[11px] text-slate-600 font-semibold">A Project of Beaconhouse • Main Campus Lahore</div>
+            if (selectedReportType === 'term') {
+              return (
+                <div className="bg-white rounded-xl border-2 border-slate-300 p-6 shadow-md max-w-4xl mx-auto space-y-5 text-xs text-slate-800">
+                  {/* School Header */}
+                  <div className="border-b-2 border-slate-900 pb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-lg bg-emerald-800 text-amber-300 flex items-center justify-center font-black text-base shadow">TE</div>
+                      <div>
+                        <h2 className="font-black text-lg text-slate-900 tracking-wide uppercase">THE EDUCATORS</h2>
+                        <div className="text-[11px] text-slate-600 font-semibold font-bold">A Project of Beaconhouse • Main Campus Lahore</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs font-black uppercase text-indigo-900 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-md">TERM PROGRESS MARK SHEET</div>
+                      <div className="text-[11px] text-slate-500 mt-1 font-mono">{selectedExam}</div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xs font-black uppercase text-indigo-900 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-md">TERM PROGRESS MARK SHEET</div>
-                    <div className="text-[11px] text-slate-500 mt-1 font-mono">{selectedExam}</div>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Student Name</span>
-                    <span className="font-bold text-slate-900 text-sm">{student.studentName}</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Student Name</span>
+                      <span className="font-bold text-slate-900 text-sm">{student.studentName}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Roll Number</span>
+                      <span className="font-mono font-bold text-sky-800 text-sm">{student.rollNo}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Class &amp; Section</span>
+                      <span className="font-bold text-slate-800">{student.className} (Sec {student.section})</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Academic Session</span>
+                      <span className="font-mono font-bold text-slate-800">2024 - 2025</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Roll Number</span>
-                    <span className="font-mono font-bold text-sky-800 text-sm">{student.rollNo}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Class &amp; Section</span>
-                    <span className="font-bold text-slate-800">{student.className} (Sec {student.section})</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Academic Session</span>
-                    <span className="font-mono font-bold text-slate-800">2024 - 2025</span>
-                  </div>
-                </div>
 
-                <div className="border border-slate-300 rounded-lg overflow-hidden">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead className="bg-[#0c1e38] text-white font-bold">
-                      <tr>
-                        <th className="py-2.5 px-3">Subject</th>
-                        <th className="py-2.5 px-3 text-center">Max Marks</th>
-                        <th className="py-2.5 px-3 text-center">Pass Marks</th>
-                        <th className="py-2.5 px-3 text-center">Marks Obtained</th>
-                        <th className="py-2.5 px-3 text-center">Grade</th>
-                        <th className="py-2.5 px-3">Subject Teacher Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200">
-                      {student.subjectMarks.map((sub) => (
-                        <tr key={sub.subject} className="hover:bg-slate-50">
-                          <td className="py-2 px-3 font-bold text-slate-800">{sub.subject}</td>
-                          <td className="py-2 px-3 text-center font-mono text-slate-600">{sub.totalMarks}</td>
-                          <td className="py-2 px-3 text-center font-mono text-slate-500">40</td>
-                          <td className="py-2 px-3 text-center font-mono font-bold text-slate-900">{sub.obtainedMarks}</td>
-                          <td className="py-2 px-3 text-center font-bold text-indigo-900">{sub.grade}</td>
-                          <td className="py-2 px-3 text-slate-600 text-[11px]">
-                            {sub.obtainedMarks >= 85
-                              ? 'Excellent understanding & analytical skills.'
-                              : sub.obtainedMarks >= 70
-                              ? 'Good progress. Needs practice in subjective essays.'
-                              : 'Satisfactory. Regular revision recommended.'}
-                          </td>
+                  <div className="border border-slate-300 rounded-lg overflow-hidden">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-[#0c1e38] text-white font-bold">
+                        <tr>
+                          <th className="py-2.5 px-3">Subject</th>
+                          <th className="py-2.5 px-3 text-center">Max Marks</th>
+                          <th className="py-2.5 px-3 text-center">Pass Marks</th>
+                          <th className="py-2.5 px-3 text-center">Marks Obtained</th>
+                          <th className="py-2.5 px-3 text-center">Grade</th>
+                          <th className="py-2.5 px-3">Subject Teacher Remarks</th>
                         </tr>
-                      ))}
-                    </tbody>
-                    <tfoot className="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-900">
-                      <tr>
-                        <td className="py-2.5 px-3 uppercase font-bold">Grand Total</td>
-                        <td className="py-2.5 px-3 text-center font-mono">{student.totalMax}</td>
-                        <td className="py-2.5 px-3 text-center font-mono">160</td>
-                        <td className="py-2.5 px-3 text-center font-mono font-extrabold text-emerald-900 text-sm">{student.totalObtained}</td>
-                        <td className="py-2.5 px-3 text-center text-emerald-800 text-sm">{student.overallGrade}</td>
-                        <td className="py-2.5 px-3 font-mono text-indigo-900">Percentage: {student.percentage}%</td>
-                      </tr>
-                    </tfoot>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200">
+                        {student.subjectMarks.map((sub) => (
+                          <tr key={sub.subject} className="hover:bg-slate-50">
+                            <td className="py-2 px-3 font-bold text-slate-800">{sub.subject}</td>
+                            <td className="py-2 px-3 text-center font-mono text-slate-600">{sub.totalMarks}</td>
+                            <td className="py-2 px-3 text-center font-mono text-slate-500">40</td>
+                            <td className="py-2 px-3 text-center font-mono font-bold text-slate-900">{sub.obtainedMarks}</td>
+                            <td className="py-2 px-3 text-center font-bold text-indigo-900">{sub.grade}</td>
+                            <td className="py-2 px-3 text-slate-600 text-[11px]">
+                              {sub.obtainedMarks >= 85
+                                ? 'Excellent understanding & analytical skills.'
+                                : sub.obtainedMarks >= 70
+                                ? 'Good progress. Needs practice in subjective essays.'
+                                : 'Satisfactory. Regular revision recommended.'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot className="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-900">
+                        <tr>
+                          <td className="py-2.5 px-3 uppercase font-bold">Grand Total</td>
+                          <td className="py-2.5 px-3 text-center font-mono">{student.totalMax}</td>
+                          <td className="py-2.5 px-3 text-center font-mono">160</td>
+                          <td className="py-2.5 px-3 text-center font-mono font-extrabold text-indigo-950 text-sm">{student.totalObtained}</td>
+                          <td className="py-2.5 px-3 text-center text-emerald-800 text-sm">{student.overallGrade}</td>
+                          <td className="py-2.5 px-3 font-mono text-indigo-900">Percentage: {student.percentage}%</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+
+                  <div className="pt-8 border-t border-slate-300 grid grid-cols-3 gap-4 text-center text-[11px] font-bold">
+                    <div>
+                      <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
+                      <span className="font-bold text-slate-800 block">Class Incharge</span>
+                    </div>
+                    <div>
+                      <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
+                      <span className="font-bold text-slate-800 block">Controller of Examinations</span>
+                    </div>
+                    <div>
+                      <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
+                      <span className="font-bold text-slate-800 block">Executive Principal Seal</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
+              );
+            } else {
+              return (
+                <div className="bg-white rounded-xl border-2 border-slate-300 p-6 shadow-md max-w-4xl mx-auto space-y-5 text-xs text-slate-800">
+                  {/* School Header */}
+                  <div className="border-b-2 border-slate-900 pb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-lg bg-indigo-900 text-amber-300 flex items-center justify-center font-black text-base shadow">TE</div>
+                      <div>
+                        <h2 className="font-black text-lg text-slate-900 tracking-wide uppercase">THE EDUCATORS</h2>
+                        <div className="text-[11px] text-slate-600 font-semibold font-bold">Annual Cumulative Examination Transcript</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs font-black uppercase text-indigo-900 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-md">BOARD CUMULATIVE TRANSCRIPT</div>
+                      <div className="text-[11px] text-slate-500 mt-1 font-mono">Academic Session 2024 - 2025</div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Student Name</span>
+                      <span className="font-bold text-indigo-950 text-sm">{student.studentName}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Roll Number</span>
+                      <span className="font-mono font-bold text-indigo-700 text-sm">{student.rollNo}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Class &amp; Section</span>
+                      <span className="font-bold text-slate-800">{student.className} (Sec {student.section})</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Promotion Board</span>
+                      <span className="font-mono font-bold text-slate-800">PASSED AND PROMOTED</span>
+                    </div>
+                  </div>
+
+                  <div className="border border-slate-300 rounded-lg overflow-hidden">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-[#102a4e] text-white font-bold">
+                        <tr>
+                          <th className="py-2.5 px-3">Subject</th>
+                          <th className="py-2.5 px-3 text-center">First Term (20%)</th>
+                          <th className="py-2.5 px-3 text-center">Mid Term (30%)</th>
+                          <th className="py-2.5 px-3 text-center">Final Term (50%)</th>
+                          <th className="py-2.5 px-3 text-center">Cumulative (100%)</th>
+                          <th className="py-2.5 px-3 text-center">Assigned Grade</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200">
+                        {student.subjectMarks.map((sub) => {
+                          const obtainedVal = sub.obtainedMarks;
+                          return (
+                            <tr key={sub.subject} className="hover:bg-slate-50">
+                              <td className="py-2 px-3 font-bold text-slate-800">{sub.subject}</td>
+                              <td className="py-2 px-3 text-center font-mono text-slate-600">{obtainedVal - 5} / 100</td>
+                              <td className="py-2 px-3 text-center font-mono text-slate-600">{obtainedVal} / 100</td>
+                              <td className="py-2 px-3 text-center font-mono text-slate-600">{obtainedVal + 3} / 100</td>
+                              <td className="py-2 px-3 text-center font-mono font-bold text-emerald-900 bg-emerald-50/20">{obtainedVal + 1} / 100</td>
+                              <td className="py-2 px-3 text-center font-bold text-indigo-900">{sub.grade}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot className="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-900">
+                        <tr>
+                          <td className="py-2.5 px-3 uppercase">Grand Total Portfolio</td>
+                          <td className="py-2.5 px-3 text-center font-mono">78%</td>
+                          <td className="py-2.5 px-3 text-center font-mono">82%</td>
+                          <td className="py-2.5 px-3 text-center font-mono font-extrabold">85%</td>
+                          <td className="py-2.5 px-3 text-center font-mono font-extrabold text-emerald-900 text-sm">{student.percentage}%</td>
+                          <td className="py-2.5 px-3 text-center text-emerald-800 text-sm">{student.overallGrade}</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+
+                  <div className="pt-8 border-t border-slate-300 grid grid-cols-3 gap-4 text-center text-[11px] font-bold">
+                    <div>
+                      <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
+                      <span className="font-bold text-slate-800 block">Class Incharge</span>
+                    </div>
+                    <div>
+                      <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
+                      <span className="font-bold text-slate-800 block">Controller of Examinations</span>
+                    </div>
+                    <div>
+                      <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
+                      <span className="font-bold text-slate-800 block">Executive Principal Seal</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
           })()}
         </div>
       )}
 
       {/* ============================================================ */}
-      {/* PAGE 16: PRINT MARK SHEETS - FOR FINAL EXAM */}
+      {/* PAGE 16: ANALYTICAL EXAM REPORTS & PERFORMANCE GRAPHS */}
       {/* ============================================================ */}
-      {activeTab === 'marksheet_final' && (
+      {activeTab === 'exam_reports' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-indigo-950">
-                Official Student Cumulative Transcript / Mark Sheet — Final Results
-              </h3>
-              <p className="text-slate-500 text-xs">
-                Inspect and print the annual cumulative board standard transcript card for students.
-              </p>
+              <h3 className="text-sm font-bold text-indigo-950">Campus-Wide Academic Reports &amp; Statistical Audits</h3>
+              <p className="text-xs text-slate-500">Distribution analysis, class performance diagnostics, and pass rate summaries for {selectedClass}.</p>
             </div>
-
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedReportCard?.id || filteredMarks[0]?.id || ''}
-                onChange={(e) => {
-                  const target = filteredMarks.find((m) => m.id === e.target.value);
-                  if (target) setSelectedReportCard(target);
-                }}
-                className="px-3 py-1.5 border border-slate-300 rounded font-semibold text-xs bg-white text-slate-800"
-              >
-                {filteredMarks.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    Roll #{m.rollNo} — {m.studentName} ({m.overallGrade})
-                  </option>
-                ))}
-              </select>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const target = selectedReportCard || filteredMarks[0];
-                  if (target) onPrintReportCard(target);
-                }}
-                className="px-3.5 py-1.5 bg-indigo-900 hover:bg-black text-white rounded font-bold text-xs flex items-center gap-1.5 shadow"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Print Cumulative Transcript</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="px-3.5 py-1.5 bg-[#1b3b6f] hover:bg-slate-900 text-white rounded font-bold text-xs flex items-center gap-1 shadow"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Print Summary PDF</span>
+            </button>
           </div>
 
-          {/* Report Card Document Preview Container */}
-          {(() => {
-            const student = selectedReportCard || filteredMarks[0];
-            if (!student) {
-              return (
-                <div className="bg-white rounded-lg p-8 text-center text-slate-500">
-                  No student result data found for this class.
-                </div>
-              );
-            }
-
-            return (
-              <div className="bg-white rounded-xl border-2 border-slate-300 p-6 shadow-md max-w-4xl mx-auto space-y-5 text-xs text-slate-800">
-                {/* School Header */}
-                <div className="border-b-2 border-slate-900 pb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-indigo-900 text-amber-300 flex items-center justify-center font-black text-base shadow">TE</div>
-                    <div>
-                      <h2 className="font-black text-lg text-slate-900 tracking-wide uppercase">THE EDUCATORS</h2>
-                      <div className="text-[11px] text-slate-600 font-semibold font-bold">Annual Cumulative Examination Transcript</div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
+            {/* Subject Averages */}
+            <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-3">
+              <h4 className="font-bold text-slate-800 flex items-center gap-1.5 border-b pb-2">
+                <BarChart3 className="w-4 h-4 text-indigo-600" />
+                <span>Subject Wise Average Pass Rate</span>
+              </h4>
+              <div className="space-y-3">
+                {[
+                  { name: 'Mathematics', avg: 84, color: 'bg-emerald-600' },
+                  { name: 'English Literature', avg: 79, color: 'bg-indigo-600' },
+                  { name: 'General Sciences', avg: 82, color: 'bg-teal-600' },
+                  { name: 'Urdu & Grammar', avg: 89, color: 'bg-purple-600' },
+                  { name: 'Social Studies & Pak Affairs', avg: 76, color: 'bg-amber-600' },
+                ].map((sub) => (
+                  <div key={sub.name} className="space-y-1">
+                    <div className="flex justify-between font-bold text-slate-700 text-[10px]">
+                      <span>{sub.name}</span>
+                      <span className="font-mono text-indigo-900">{sub.avg}% Class Avg</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div className={`${sub.color} h-2 rounded-full`} style={{ width: `${sub.avg}%` }} />
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xs font-black uppercase text-indigo-900 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-md">BOARD CUMULATIVE TRANSCRIPT</div>
-                    <div className="text-[11px] text-slate-500 mt-1 font-mono">Academic Session 2024 - 2025</div>
+                ))}
+              </div>
+            </div>
+
+            {/* Grade Cohorts */}
+            <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-3">
+              <h4 className="font-bold text-slate-800 flex items-center gap-1.5 border-b pb-2">
+                <Award className="w-4 h-4 text-emerald-600" />
+                <span>Grade Distribution Statistics</span>
+              </h4>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { grade: 'A+ Elite', count: 14, color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+                  { grade: 'A Standard', count: 11, color: 'text-indigo-700 bg-indigo-50 border-indigo-200' },
+                  { grade: 'B Satisfactory', count: 7, color: 'text-blue-700 bg-blue-50 border-blue-200' },
+                  { grade: 'C Average', count: 3, color: 'text-amber-700 bg-amber-50 border-amber-200' },
+                  { grade: 'D Passing', count: 1, color: 'text-orange-700 bg-orange-50 border-orange-200' },
+                  { grade: 'F Failed', count: 0, color: 'text-rose-700 bg-rose-50 border-rose-200' },
+                ].map((coh) => (
+                  <div key={coh.grade} className={`p-2.5 rounded-lg border text-center font-bold ${coh.color}`}>
+                    <div className="text-[10px] text-slate-500 uppercase font-bold">{coh.grade}</div>
+                    <div className="text-lg font-black font-mono mt-0.5">{coh.count}</div>
+                    <div className="text-[9px] text-slate-400 font-normal">Students</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Performance Insights */}
+            <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-3">
+              <h4 className="font-bold text-slate-800 flex items-center gap-1.5 border-b pb-2">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span>AI Insights &amp; Board Recommendations</span>
+              </h4>
+              <div className="space-y-2.5 text-[11px] leading-relaxed text-slate-600 font-medium">
+                <div className="p-2.5 rounded bg-amber-50 text-amber-900 border border-amber-200 flex items-start gap-2">
+                  <div className="font-black text-xs">💡</div>
+                  <div>
+                    <span className="font-bold">Mathematics Outperformance:</span> Student cohort demonstrated a 4.2% increase in math scores compared to last term.
                   </div>
                 </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+                <div className="p-2.5 rounded bg-blue-50 text-blue-900 border border-blue-200 flex items-start gap-2">
+                  <div className="font-black text-xs">📊</div>
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Student Name</span>
-                    <span className="font-bold text-indigo-950 text-sm">{student.studentName}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Roll Number</span>
-                    <span className="font-mono font-bold text-indigo-700 text-sm">{student.rollNo}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Class &amp; Section</span>
-                    <span className="font-bold text-slate-800">{student.className} (Sec {student.section})</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Promotion Board</span>
-                    <span className="font-mono font-bold text-slate-800">PASSED AND PROMOTED</span>
+                    <span className="font-bold">Attendance Correlation:</span> Top 10% high scorers have an overall attendance rate exceeding 96.4%.
                   </div>
                 </div>
-
-                <div className="border border-slate-300 rounded-lg overflow-hidden">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead className="bg-[#102a4e] text-white font-bold">
-                      <tr>
-                        <th className="py-2.5 px-3">Subject</th>
-                        <th className="py-2.5 px-3 text-center">First Term (20%)</th>
-                        <th className="py-2.5 px-3 text-center">Mid Term (30%)</th>
-                        <th className="py-2.5 px-3 text-center">Final Term (50%)</th>
-                        <th className="py-2.5 px-3 text-center">Cumulative (100%)</th>
-                        <th className="py-2.5 px-3 text-center">Assigned Grade</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200">
-                      {student.subjectMarks.map((sub) => {
-                        const obtainedVal = sub.obtainedMarks;
-                        return (
-                          <tr key={sub.subject} className="hover:bg-slate-50">
-                            <td className="py-2 px-3 font-bold text-slate-800">{sub.subject}</td>
-                            <td className="py-2 px-3 text-center font-mono text-slate-600">{obtainedVal - 5} / 100</td>
-                            <td className="py-2 px-3 text-center font-mono text-slate-600">{obtainedVal} / 100</td>
-                            <td className="py-2 px-3 text-center font-mono text-slate-600">{obtainedVal + 3} / 100</td>
-                            <td className="py-2 px-3 text-center font-mono font-bold text-emerald-900 bg-emerald-50/20">{obtainedVal + 1} / 100</td>
-                            <td className="py-2 px-3 text-center font-bold text-indigo-900">{sub.grade}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                    <tfoot className="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-900">
-                      <tr>
-                        <td className="py-2.5 px-3 uppercase">Grand Total Portfolio</td>
-                        <td className="py-2.5 px-3 text-center font-mono">78%</td>
-                        <td className="py-2.5 px-3 text-center font-mono">82%</td>
-                        <td className="py-2.5 px-3 text-center font-mono font-extrabold">85%</td>
-                        <td className="py-2.5 px-3 text-center font-mono font-extrabold text-emerald-900 text-sm">{student.percentage}%</td>
-                        <td className="py-2.5 px-3 text-center text-emerald-800 text-sm">{student.overallGrade}</td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-
-                <div className="pt-8 border-t border-slate-300 grid grid-cols-3 gap-4 text-center text-[11px] font-bold">
+                <div className="p-2.5 rounded bg-rose-50 text-rose-900 border border-rose-200 flex items-start gap-2">
+                  <div className="font-black text-xs">⚠️</div>
                   <div>
-                    <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
-                    <span className="font-bold text-slate-800 block">Class Incharge</span>
-                  </div>
-                  <div>
-                    <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
-                    <span className="font-bold text-slate-800 block">Controller of Examinations</span>
-                  </div>
-                  <div>
-                    <div className="w-32 border-b border-slate-700 mx-auto mb-1" />
-                    <span className="font-bold text-slate-800 block">Executive Principal Seal</span>
+                    <span className="font-bold">Subject Focus Areas:</span> General Sciences subjective written essays remain the primary source of mark deficits. Recommend weekly mock essays.
                   </div>
                 </div>
               </div>
-            );
-          })()}
+            </div>
+          </div>
+
+          {/* Printable Broad Class Summary Sheet */}
+          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs text-xs text-slate-800 space-y-4">
+            <div className="border-b pb-3 flex items-center justify-between">
+              <div>
+                <h4 className="font-black text-slate-900 uppercase">OFFICIAL EXECUTIVE CAMPUS EXAM REPORT</h4>
+                <p className="text-[10px] text-slate-500 font-mono">ID: EXAM-REPT-2024-09B • The Educators Beaconhouse Network</p>
+              </div>
+              <span className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-bold uppercase text-[10px] tracking-wider">BOARD COMPLIANT</span>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div className="bg-slate-50 p-2.5 rounded-lg border">
+                <span className="text-[10px] text-slate-500 uppercase block">Registered Candidates</span>
+                <span className="text-base font-black font-mono text-indigo-950">36 Candidates</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border">
+                <span className="text-[10px] text-slate-500 uppercase block">Overall Pass Percentage</span>
+                <span className="text-base font-black font-mono text-emerald-800">100% Pass Rate</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border">
+                <span className="text-[10px] text-slate-500 uppercase block">Highest Class GPA</span>
+                <span className="text-base font-black font-mono text-amber-600">A+ Honor Roll</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border">
+                <span className="text-[10px] text-slate-500 uppercase block">Average Subject Score</span>
+                <span className="text-base font-black font-mono text-slate-800">82.3 / 100</span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

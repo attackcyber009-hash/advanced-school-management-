@@ -376,6 +376,15 @@ export interface SecurityPolicyConfig {
 
 export type ActiveNavTab =
   | 'dashboard'
+  | 'daily_homework_diary'
+  | 'study_materials'
+  | 'leave_management'
+  | 'sms_management'
+  | 'mobile_notifications'
+  | 'whatsapp_notifications'
+  | 'telegram_notifications'
+  | 'email_alerts'
+  | 'certifications_hub'
   | 'admissions'
   | 'students'
   | 'parents'
@@ -392,6 +401,7 @@ export type ActiveNavTab =
   | 'salaries'
   | 'inventory'
   | 'exams'
+  | 'tests'
   | 'certifications'
   | 'certificates'
   | 'diary'
@@ -426,7 +436,17 @@ export type ActiveNavTab =
   | 'settings'
   | 'teacher_portal'
   | 'parent_portal'
-  | 'student_portal';
+  | 'student_portal'
+  | 'school_notice_board'
+  | 'manage_campuses'
+  | 'admin_roles'
+  | 'sms_defaulters'
+  | 'bulk_fee_payment'
+  | 'admit_student_form'
+  | 'fee_types_heads'
+  | 'family_fee_calculator'
+  | 'manage_biometric_devices'
+  | 'website_management';
 
 // Phase 5 Financial Operations, Fee Engine, Payroll & POS Store Types
 export interface SalarySlip {
@@ -1590,6 +1610,92 @@ export interface AIQuestionItem {
   sloRefCode: string; // e.g. "SNC-SLO-PHY-10.3.2"
   difficultyLevel: 'Easy' | 'Medium' | 'Challenging';
 }
+
+export interface LeaveRequest {
+  id: string;
+  applicantName: string;
+  role: 'Student' | 'Teacher' | 'Admin' | 'Staff';
+  departmentOrClass: string;
+  leaveType: 'Casual' | 'Medical' | 'Maternity' | 'Sabbatical' | 'Emergency' | 'Unpaid';
+  startDate: string;
+  endDate: string;
+  totalDays: number;
+  reason: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  appliedDate: string;
+  attachments?: string;
+  approvedBy?: string;
+  rejectionReason?: string;
+}
+
+export interface LeaveBalance {
+  id: string;
+  employeeName: string;
+  role: 'Teacher' | 'Admin' | 'Staff';
+  casual: number;
+  medical: number;
+  unpaid: number;
+  earned: number;
+  used: number;
+}
+
+// Communication Interfaces
+export interface SmsRecord {
+  id: string;
+  sender: string;
+  recipientType: 'Parent' | 'Student' | 'Staff' | 'Specific Number';
+  recipientName: string;
+  message: string;
+  timestamp: string;
+  status: 'Sent' | 'Delivered' | 'Failed';
+  gatewayResponse?: string;
+}
+
+export interface SmsTemplate {
+  id: string;
+  title: string;
+  body: string;
+  category: 'Attendance' | 'Fee Reminder' | 'Exam Result' | 'General' | 'Emergency';
+}
+
+export interface MobileNotificationRecord {
+  id: string;
+  recipientType: 'Parent' | 'Staff' | 'Student';
+  recipientName: string;
+  title: string;
+  body: string;
+  timestamp: string;
+  status: 'Delivered' | 'Failed' | 'Read';
+}
+
+export interface WhatsAppRecord {
+  id: string;
+  recipientType: 'Parent' | 'Staff';
+  recipientName: string;
+  message: string;
+  timestamp: string;
+  status: 'Sent' | 'Delivered' | 'Read' | 'Failed';
+}
+
+export interface TelegramRecord {
+  id: string;
+  recipientType: 'Parent' | 'Staff';
+  recipientName: string;
+  message: string;
+  timestamp: string;
+  status: 'Sent' | 'Delivered' | 'Failed';
+}
+
+export interface EmailRecord {
+  id: string;
+  recipientEmails: string;
+  subject: string;
+  body: string;
+  timestamp: string;
+  status: 'Sent' | 'Opened' | 'Failed';
+  attachments?: string;
+}
+
 
 
 
