@@ -44,6 +44,7 @@ import {
   Globe,
   Calculator,
   Megaphone,
+  HelpCircle,
   ChevronDown,
   ChevronRight,
   ChevronLeft,
@@ -127,8 +128,13 @@ export default function SidebarNavigation({
     students: false,
     attendance: true,
     fees: true,
-    exams: false,
+    exams: true,
     timetable: true,
+    onlinePayment: false,
+    expenses: false,
+    salaries: false,
+    reports: false,
+    inventory: true,
   });
 
   const toggleSubmenu = (key: string) => {
@@ -424,12 +430,12 @@ export default function SidebarNavigation({
             ]}
           />
 
-          {/* 5. Staff Management */}
+          {/* 5. Teachers */}
           <SidebarNavItem
             id="nav-staff"
             icon={Briefcase}
             iconColor="text-rose-400"
-            label="Staff Management"
+            label="Teachers"
             active={activeTab === 'staff'}
             onClick={() => handleTabClick('staff')}
             isCollapsed={isCollapsed}
@@ -806,47 +812,179 @@ export default function SidebarNavigation({
             ]}
           />
 
-          {/* 15. Expense Management */}
-          <SidebarNavItem
+          {/* Online Payment Submenu */}
+          <SidebarNavSubmenu
+            id="nav-online-payment"
+            icon={Globe}
+            iconColor="text-teal-400"
+            label="Online payment"
+            active={activeTab === 'fee_vouchers'}
+            isExpanded={expandedMenus.onlinePayment}
+            onToggleExpand={() => toggleSubmenu('onlinePayment')}
+            onClickParent={() => handleTabClick('fee_vouchers')}
+            isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Accounts settlement',
+                onClick: () => handleTabClick('fee_vouchers'),
+              },
+            ]}
+          />
+
+          {/* Expense Management Submenu */}
+          <SidebarNavSubmenu
             id="nav-expenses"
             icon={TrendingDown}
             iconColor="text-rose-400"
-            label="Expense Management"
+            label="Expense management"
             active={activeTab === 'expenses'}
-            onClick={() => handleTabClick('expenses')}
+            isExpanded={expandedMenus.expenses}
+            onToggleExpand={() => toggleSubmenu('expenses')}
+            onClickParent={() => handleTabClick('expenses')}
             isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Add/manage expense',
+                onClick: () => handleTabClick('expenses'),
+              },
+              {
+                label: '• Expense categories',
+                onClick: () => handleTabClick('expenses'),
+              },
+            ]}
           />
 
-          {/* 16. Salary & Loan Payroll */}
-          <SidebarNavItem
+          {/* Salary and Loan Management Submenu */}
+          <SidebarNavSubmenu
             id="nav-salaries"
             icon={Coins}
             iconColor="text-amber-400"
-            label="Salary & Loan Payroll"
+            label="Salary and loan management"
             active={activeTab === 'salaries'}
-            onClick={() => handleTabClick('salaries')}
+            isExpanded={expandedMenus.salaries}
+            onToggleExpand={() => toggleSubmenu('salaries')}
+            onClickParent={() => handleTabClick('salaries')}
             isCollapsed={isCollapsed}
+            subItems={[
+              {
+                label: '• Generate salary',
+                onClick: () => handleTabClick('salaries'),
+              },
+              {
+                label: '• Manage salaries',
+                onClick: () => handleTabClick('salaries'),
+              },
+              {
+                label: '• Loan management',
+                onClick: () => handleTabClick('salaries'),
+              },
+              {
+                label: '• Salary settings',
+                onClick: () => handleTabClick('salaries'),
+              },
+              {
+                label: '• Salary and loan reports',
+                onClick: () => handleTabClick('salaries'),
+              },
+            ]}
           />
 
-          {/* 17. Stock & Inventory POS */}
-          <SidebarNavItem
+          {/* Reporting Area Submenu */}
+          <SidebarNavSubmenu
+            id="nav-reports"
+            icon={BarChart3}
+            iconColor="text-emerald-400"
+            label="Reporting area"
+            active={activeTab === 'analytics' || activeTab === 'fee_vouchers'}
+            isExpanded={expandedMenus.reports}
+            onToggleExpand={() => toggleSubmenu('reports')}
+            onClickParent={() => handleTabClick('analytics')}
+            isCollapsed={isCollapsed}
+            subItems={[
+              { label: '• Fee defaulter report', onClick: () => handleTabClick('fee_vouchers') },
+              { label: '• Income and expense report', onClick: () => handleTabClick('expenses') },
+              { label: '• Fee discount report', onClick: () => handleTabClick('fee_vouchers') },
+              { label: '• Detailed income report', onClick: () => handleTabClick('fee_vouchers') },
+              { label: '• Detailed expense report', onClick: () => handleTabClick('expenses') },
+              { label: '• Head wise due summary', onClick: () => handleTabClick('fee_vouchers') },
+              { label: '• Income and expense summary', onClick: () => handleTabClick('analytics') },
+              { label: '• Accounts summary report', onClick: () => handleTabClick('analytics') },
+              { label: '• List of unpaid invoices', onClick: () => handleTabClick('fee_vouchers') },
+              { label: '• Staff salary reports', onClick: () => handleTabClick('salaries') },
+              { label: '• Admission date report', onClick: () => handleTabClick('admissions') },
+              { label: '• Student information reports', onClick: () => handleTabClick('students') },
+              { label: '• Find balance sheet', onClick: () => handleTabClick('fee_vouchers') },
+              { label: '• Attendance report', onClick: () => handleTabClick('attendance') },
+              { label: '   - Student attendance', onClick: () => handleTabClick('attendance'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - Staff attendance', onClick: () => handleTabClick('attendance'), className: 'text-slate-400 pl-3 text-[10px]' },
+            ]}
+          />
+
+          {/* Stock and Inventory Submenu */}
+          <SidebarNavSubmenu
             id="nav-inventory"
             icon={Package}
             iconColor="text-orange-400"
-            label="Stock & Inventory POS"
+            label="Stock and inventory"
             active={activeTab === 'inventory'}
-            onClick={() => handleTabClick('inventory')}
+            isExpanded={expandedMenus.inventory}
+            onToggleExpand={() => toggleSubmenu('inventory')}
+            onClickParent={() => handleTabClick('inventory')}
             isCollapsed={isCollapsed}
+            subItems={[
+              { label: '• Point of sale', onClick: () => handleTabClick('inventory') },
+              { label: '• Manage categories', onClick: () => handleTabClick('inventory') },
+              { label: '• Products and stocks', onClick: () => handleTabClick('inventory') },
+              { label: '• Add bulk products', onClick: () => handleTabClick('inventory') },
+              { label: '• Stock and sales report', onClick: () => handleTabClick('inventory') },
+            ]}
           />
 
-          {/* 18. Exam & Tabulation Sheet */}
-          <SidebarNavItem
+          {/* Exam / Test Management Submenu */}
+          <SidebarNavSubmenu
             id="nav-exams"
             icon={Award}
             iconColor="text-purple-400"
-            label="Exam & Tabulation Sheet"
+            label="Exam / test management"
             active={activeTab === 'exams'}
-            onClick={() => handleTabClick('exams')}
+            isExpanded={expandedMenus.exams}
+            onToggleExpand={() => toggleSubmenu('exams')}
+            onClickParent={() => handleTabClick('exams')}
+            isCollapsed={isCollapsed}
+            subItems={[
+              { label: '• Exam term / semester list', onClick: () => handleTabClick('exams') },
+              { label: '• Marks entry', onClick: () => handleTabClick('exams') },
+              { label: '• Exam timetable', onClick: () => handleTabClick('exams') },
+              { label: '• Assign grade', onClick: () => handleTabClick('exams') },
+              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final result', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Teacher remarks', onClick: () => handleTabClick('exams') },
+              { label: '• Tabulation sheet', onClick: () => handleTabClick('exams') },
+              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final result', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Position holder', onClick: () => handleTabClick('exams') },
+              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print admit cards / slips', onClick: () => handleTabClick('exams') },
+              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Send marks by SMS', onClick: () => handleTabClick('exams') },
+              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '• Print mark sheets', onClick: () => handleTabClick('exams') },
+              { label: '   - Term / semester wise', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+              { label: '   - For final exam', onClick: () => handleTabClick('exams'), className: 'text-slate-400 pl-3 text-[10px]' },
+            ]}
+          />
+
+          {/* Quiz management */}
+          <SidebarNavItem
+            id="nav-quiz"
+            icon={HelpCircle}
+            iconColor="text-pink-400"
+            label="Quiz management"
+            active={activeTab === 'quiz'}
+            onClick={() => handleTabClick('quiz')}
             isCollapsed={isCollapsed}
           />
 

@@ -971,7 +971,7 @@ export default function App() {
           )}
 
           {/* Phase 10 View 1: Digital LMS Vault, E-Learning Video Hub & SLO Quiz Engine */}
-          {activeTab === 'lms_vault' && (
+          {(activeTab === 'lms_vault' || activeTab === 'quiz') && (
             <DigitalLmsQuizVaultView
               onPrintCompletionCertificate={(sub) =>
                 setPrintModalConfig({

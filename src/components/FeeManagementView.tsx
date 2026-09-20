@@ -33,7 +33,7 @@ interface FeeManagementViewProps {
   vouchers: FeeVoucher[];
   students: Student[];
   onPrintVoucher: (voucher: FeeVoucher) => void;
-  onRecordPayment: (voucherId: string, amount: number, method: 'Cash' | 'Bank' | 'Online Wallet') => void;
+  onRecordPayment: (voucherId: string, amount: number, method: string) => void;
   onAddVouchers?: (newVouchers: FeeVoucher[]) => void;
   initialAction?:
     | 'monthly'
@@ -147,7 +147,9 @@ export default function FeeManagementView({
   // Payment & Detail Modal states
   const [paymentModalVoucher, setPaymentModalVoucher] = useState<FeeVoucher | null>(null);
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
-  const [paymentMethod, setPaymentMethod] = useState<'Cash' | 'Bank' | 'Online Wallet'>('Cash');
+  const [paymentMethod, setPaymentMethod] = useState<
+    'Cash' | 'CBE (Commercial Bank of Ethiopia)' | 'Telebirr (+251927650724)' | 'Safaricom' | 'Bank' | 'Online Wallet'
+  >('Cash');
   const [bankRefNo, setBankRefNo] = useState('');
   const [challanModalVoucher, setChallanModalVoucher] = useState<FeeVoucher | null>(null);
 
@@ -1044,7 +1046,7 @@ export default function FeeManagementView({
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Payment Method</label>
                 <div className="grid grid-cols-3 gap-2">
-                  {(['Cash', 'Bank', 'Online Wallet'] as const).map((m) => (
+                  {(['Cash', 'CBE (Commercial Bank of Ethiopia)', 'Telebirr (+251927650724)', 'Safaricom', 'Bank', 'Online Wallet'] as const).map((m) => (
                     <button
                       type="button"
                       key={m}

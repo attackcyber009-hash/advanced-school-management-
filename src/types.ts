@@ -407,6 +407,7 @@ export type ActiveNavTab =
   | 'infirmary'
   | 'lab_assets'
   | 'question_paper'
+  | 'quiz'
   | 'admission_merit'
   | 'teacher_cpd'
   | 'ptm_portal'
