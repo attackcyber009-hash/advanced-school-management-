@@ -3,6 +3,8 @@ import { Award, Printer, Download, CheckCircle, X, Shield, FileText, Calendar, S
 import { Student } from '../types';
 import { db } from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface CertificateGeneratorModalProps {
   isOpen: boolean;
@@ -29,11 +31,13 @@ export default function CertificateGeneratorModal({
   if (!isOpen || !student) return null;
 
   const [isPrinting, setIsPrinting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const certificateNumber = `TE-${certType.toUpperCase().slice(0, 3)}-2024-${student.rollNo || '01'}`;
 
   const handlePrint = async () => {
     setIsPrinting(true);
+    
     try {
       // Record issuance in Firestore
       await addDoc(collection(db, 'issuedCertificates'), {
@@ -42,18 +46,54 @@ export default function CertificateGeneratorModal({
         certificateType: certType,
         certificateNumber,
         issueDate,
-        issuedBy: 'Admin', // Assuming current admin user
+        issuedBy: 'Admin',
         timestamp: new Date().toISOString(),
       });
-      // Small delay to allow UI to show "Recording..." state before print dialog blocks thread
-      setTimeout(() => {
-        window.print();
-        setIsPrinting(false);
-      }, 500);
+      
+      // Give the UI a moment to render the "Recording..." state before triggering the blocking print dialog
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.print();
+          setIsPrinting(false);
+        }, 100);
+      });
+      
     } catch (error) {
       console.error('Error recording certificate issuance:', error);
       alert('Failed to record certificate issuance. Please try again.');
       setIsPrinting(false);
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    setIsDownloading(true);
+    try {
+      // Record issuance
+      await addDoc(collection(db, 'issuedCertificates'), {
+        studentId: student.id,
+        studentName: student.name,
+        certificateType: certType,
+        certificateNumber,
+        issueDate,
+        issuedBy: 'Admin',
+        timestamp: new Date().toISOString(),
+      });
+
+      const input = document.getElementById('official-certificate-document');
+      if (input) {
+        const canvas = await html2canvas(input, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Certificate_${student.name}_${certType}.pdf`);
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -114,6 +154,16 @@ export default function CertificateGeneratorModal({
             >
               <Printer className="w-3.5 h-3.5" />
               <span>{isPrinting ? 'Recording...' : 'Print Official Seal'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDownloadPDF}
+              disabled={isDownloading}
+              className={`px-3.5 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded shadow flex items-center gap-1.5 transition cursor-pointer ${isDownloading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>{isDownloading ? 'Generating...' : 'Download PDF'}</span>
             </button>
 
             <button
