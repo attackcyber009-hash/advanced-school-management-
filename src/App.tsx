@@ -283,6 +283,7 @@ import FacilityFleetMaintenanceView from './components/FacilityFleetMaintenanceV
 import HostelCafeteriaInventoryView from './components/HostelCafeteriaInventoryView';
 import AIQuestionBankEngineView from './components/AIQuestionBankEngineView';
 import LocalizationPortalView from './components/LocalizationPortalView';
+import { SettingsView } from './components/SettingsModuleSuite';
 import {
   SchoolNoticeBoardView,
   ManageCampusesView,
@@ -964,6 +965,11 @@ export default function App() {
             <WebsiteManagementView
               initialClasses={classes}
             />
+          )}
+
+          {/* Settings Module */}
+          {activeTab.startsWith('settings') && (
+            <SettingsView />
           )}
 
           {/* View Tab 2: Admissions Module */}

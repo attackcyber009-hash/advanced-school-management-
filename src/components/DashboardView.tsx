@@ -302,7 +302,63 @@ export default function DashboardView({
           </div>
           <div>
             <div className="text-xs font-bold text-slate-800">New Admission</div>
-            <div className="text-[10px] text-slate-500">Admit student &amp; ID card</div>
+            <div className="text-[10px] text-slate-500">Admit student</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('school_notice_board')}
+          className="p-2.5 bg-white hover:bg-amber-50/50 border border-slate-200 hover:border-amber-300 rounded-lg shadow-2xs flex items-center gap-2.5 transition text-left cursor-pointer group"
+        >
+          <div className="w-8 h-8 rounded-md bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs group-hover:scale-105 transition">
+            !
+          </div>
+          <div>
+            <div className="text-xs font-bold text-slate-800">Notices</div>
+            <div className="text-[10px] text-slate-500">School announcements</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('sms_defaulters')}
+          className="p-2.5 bg-white hover:bg-red-50/50 border border-slate-200 hover:border-red-300 rounded-lg shadow-2xs flex items-center gap-2.5 transition text-left cursor-pointer group"
+        >
+          <div className="w-8 h-8 rounded-md bg-red-100 text-red-700 flex items-center justify-center font-bold text-xs group-hover:scale-105 transition">
+            !
+          </div>
+          <div>
+            <div className="text-xs font-bold text-slate-800">Fee Defaulters</div>
+            <div className="text-[10px] text-slate-500">Send urgent SMS</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('bulk_fee_payment')}
+          className="p-2.5 bg-white hover:bg-emerald-50/50 border border-slate-200 hover:border-emerald-300 rounded-lg shadow-2xs flex items-center gap-2.5 transition text-left cursor-pointer group"
+        >
+          <div className="w-8 h-8 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs group-hover:scale-105 transition">
+            $
+          </div>
+          <div>
+            <div className="text-xs font-bold text-slate-800">Bulk Fees</div>
+            <div className="text-[10px] text-slate-500">Process payments</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('website_management')}
+          className="p-2.5 bg-white hover:bg-violet-50/50 border border-slate-200 hover:border-violet-300 rounded-lg shadow-2xs flex items-center gap-2.5 transition text-left cursor-pointer group"
+        >
+          <div className="w-8 h-8 rounded-md bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs group-hover:scale-105 transition">
+            🌐
+          </div>
+          <div>
+            <div className="text-xs font-bold text-slate-800">Web Portal</div>
+            <div className="text-[10px] text-slate-500">Site management</div>
           </div>
         </button>
 

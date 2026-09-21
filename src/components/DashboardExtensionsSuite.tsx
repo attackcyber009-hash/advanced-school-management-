@@ -368,8 +368,8 @@ export function ManageCampusesView({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {campuses.map((branch) => (
-          <div key={branch.campusCode} className="p-3 bg-slate-50 rounded-lg border hover:border-slate-300 transition">
+        {campuses.map((branch, index) => (
+          <div key={`${branch.campusCode}-${index}`} className="p-3 bg-slate-50 rounded-lg border hover:border-slate-300 transition">
             <div className="flex justify-between items-start">
               <div>
                 <h4 className="font-bold text-slate-900 text-xs">{branch.campusName}</h4>
@@ -398,7 +398,7 @@ export function ManageCampusesView({
               </button>
               <button
                 type="button"
-                onClick={() => handleToggleActive(branch.campusCode)}
+                onClick={() => handleToggleActive(branch.campusCode || '')}
                 className="flex-1 py-1 bg-[#002147] text-white hover:bg-black font-bold rounded text-center"
               >
                 Lock Audit

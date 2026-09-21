@@ -52,6 +52,7 @@ import {
   X,
   PanelLeftClose,
   PanelLeftOpen,
+  Settings,
   MessageSquare,
   Bell,
   MessageCircle,
@@ -438,6 +439,28 @@ export default function SidebarNavigation({
                 label: '• Website management',
                 onClick: () => handleTabClick('website_management'),
               },
+            ]}
+          />
+
+          {/* Settings Submenu */}
+          <SidebarNavSubmenu
+            id="nav-settings"
+            icon={Settings}
+            iconColor="text-slate-500"
+            label="Settings"
+            active={activeTab.startsWith('settings')}
+            isExpanded={expandedMenus.settings}
+            onToggleExpand={() => toggleSubmenu('settings')}
+            onClickParent={() => handleTabClick('settings_general')}
+            isCollapsed={isCollapsed}
+            subItems={[
+              { label: '• General settings', onClick: () => handleTabClick('settings_general') },
+              { label: '• SMS settings', onClick: () => handleTabClick('settings_sms') },
+              { label: '• Email settings', onClick: () => handleTabClick('settings_email') },
+              { label: '• Payment settings', onClick: () => handleTabClick('settings_payment') },
+              { label: '• WhatsApp API settings', onClick: () => handleTabClick('settings_whatsapp') },
+              { label: '• Telegram API settings', onClick: () => handleTabClick('settings_telegram') },
+              { label: '• Automations settings', onClick: () => handleTabClick('settings_automations') },
             ]}
           />
 

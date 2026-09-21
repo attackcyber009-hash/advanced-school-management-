@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Award, Printer, Download, CheckCircle, X, Shield, FileText, Calendar, School } from 'lucide-react';
 import { Student } from '../types';
+import { db } from '../lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 interface CertificateGeneratorModalProps {
   isOpen: boolean;
@@ -26,10 +28,33 @@ export default function CertificateGeneratorModal({
 
   if (!isOpen || !student) return null;
 
+  const [isPrinting, setIsPrinting] = useState(false);
+
   const certificateNumber = `TE-${certType.toUpperCase().slice(0, 3)}-2024-${student.rollNo || '01'}`;
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrint = async () => {
+    setIsPrinting(true);
+    try {
+      // Record issuance in Firestore
+      await addDoc(collection(db, 'issuedCertificates'), {
+        studentId: student.id,
+        studentName: student.name,
+        certificateType: certType,
+        certificateNumber,
+        issueDate,
+        issuedBy: 'Admin', // Assuming current admin user
+        timestamp: new Date().toISOString(),
+      });
+      // Small delay to allow UI to show "Recording..." state before print dialog blocks thread
+      setTimeout(() => {
+        window.print();
+        setIsPrinting(false);
+      }, 500);
+    } catch (error) {
+      console.error('Error recording certificate issuance:', error);
+      alert('Failed to record certificate issuance. Please try again.');
+      setIsPrinting(false);
+    }
   };
 
   return (
@@ -84,10 +109,11 @@ export default function CertificateGeneratorModal({
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded shadow flex items-center gap-1.5 transition cursor-pointer"
+              disabled={isPrinting}
+              className={`px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded shadow flex items-center gap-1.5 transition cursor-pointer ${isPrinting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print Official Seal</span>
+              <span>{isPrinting ? 'Recording...' : 'Print Official Seal'}</span>
             </button>
 
             <button

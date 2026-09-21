@@ -69,6 +69,9 @@ export interface StaffMember {
 export interface ClassInfo {
   id: string;
   name: string; // e.g. "Class One", "Class Two", "ICS Part 1"
+  className?: string; // Added for backward compatibility/usage
+  campusName?: string; // Added for backward compatibility/usage
+  classTeacher?: string; // Added for backward compatibility/usage
   numericLevel: number;
   sections: {
     name: string;
@@ -316,18 +319,31 @@ export interface AdmissionInquiry {
 
 export interface CampusBranch {
   id: string;
-  code: string;
-  name: string;
-  city: string;
-  principal: string;
-  phone: string;
-  email: string;
-  address: string;
-  bankTitle: string;
-  bankAccount: string;
-  studentCount: number;
-  staffCount: number;
-  status: 'Active' | 'Under Setup';
+  // Old/Existing fields (kept for backward compatibility)
+  code?: string;
+  name?: string;
+  city?: string;
+  principal?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  bankTitle?: string;
+  bankAccount?: string;
+  studentCount?: number;
+  staffCount?: number;
+  status?: 'Active' | 'Under Setup';
+  // New fields (added as optional)
+  campusCode?: string;
+  campusName?: string;
+  principalName?: string;
+  contactNo?: string;
+  teacherCount?: number;
+  feeRecoveryRate?: number;
+  ptmSatisfactionIndex?: number;
+  teacherAttendanceRate?: number;
+  biseBoardPassRate?: number;
+  studentRetentionRate?: number;
+  studentAttendanceRate?: number;
 }
 
 export interface SystemUser {
@@ -434,6 +450,13 @@ export type ActiveNavTab =
   | 'ai_question_bank_engine'
   | 'localization_portal'
   | 'settings'
+  | 'settings_general'
+  | 'settings_sms'
+  | 'settings_email'
+  | 'settings_payment'
+  | 'settings_whatsapp'
+  | 'settings_telegram'
+  | 'settings_automations'
   | 'teacher_portal'
   | 'parent_portal'
   | 'student_portal'
